@@ -50,6 +50,7 @@
 @property (nonatomic, strong) IBOutlet UILabel *issueNameLabel;
 
 @property (nonatomic, strong) IBOutlet UILabel *quotesPoliciesLabel;
+@property (nonatomic) int favQuote_id;
 
 
 //Needed for likes

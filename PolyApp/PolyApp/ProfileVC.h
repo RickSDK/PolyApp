@@ -25,6 +25,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *countryButton;
 @property (strong, nonatomic) IBOutlet UIButton *stateButton;
 @property (strong, nonatomic) IBOutlet UIButton *updateProfileButton;
+@property (strong, nonatomic) IBOutlet UIButton *upgradeButton;
 @property (strong, nonatomic) UIBarButtonItem *rightButton;
 
 @property (strong, nonatomic) IBOutlet UIImageView *levelImageView;
@@ -36,6 +37,7 @@
 -(void)valueSelected:(NSString *)value;
 
 -(IBAction)segmentClicked:(id)sender;
+-(IBAction)drawMainPic:(UIImage *)image;
 - (IBAction) countryButtonPressed: (id) sender;
 - (IBAction) stateButtonPressed: (id) sender;
 - (IBAction) changeAvatarButtonPressed: (id) sender;

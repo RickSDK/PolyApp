@@ -14,13 +14,16 @@
 @property (nonatomic, strong) NSString *created;
 @property (nonatomic, strong) NSString *username;
 @property (nonatomic, strong) NSString *imgDir;
+@property (nonatomic, strong) NSString *recipName;
 
 @property (nonatomic) int wall_id;
 @property (nonatomic) int user_id;
 @property (nonatomic) int picId;
 @property (nonatomic) int createdBy;
 @property (nonatomic) int imgNum;
+@property (nonatomic) int recipient;
 @property (nonatomic) BOOL deleteFlg;
+@property (nonatomic) BOOL redirectedFlg;
 
 +(WallObj *)objectFromLine:(NSString *)line;
 

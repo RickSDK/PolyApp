@@ -13,7 +13,7 @@
 +(WallObj *)objectFromLine:(NSString *)line {
 	WallObj *obj = [WallObj new];
 	NSArray *components = [line componentsSeparatedByString:@"|"];
-	if(components.count>6) {
+	if(components.count>9) {
 		obj.message = [components objectAtIndex:0];
 		obj.created = [components objectAtIndex:1];
 		obj.createdBy = [[components objectAtIndex:2] intValue];
@@ -22,6 +22,9 @@
 		obj.imgDir = [components objectAtIndex:4];
 		obj.imgNum = [[components objectAtIndex:5] intValue];
 		obj.wall_id = [[components objectAtIndex:6] intValue];
+		obj.recipName = [components objectAtIndex:7];
+		obj.recipient = [[components objectAtIndex:8] intValue];
+		obj.redirectedFlg = [@"Y" isEqualToString:[components objectAtIndex:9]];
 	}
 	return obj;
 }

@@ -23,6 +23,7 @@
                     <segments>
                         <segment title="Most Recent"/>
                         <segment title="Name"/>
+                        <segment title="Friends"/>
                     </segments>
                     <connections>
                         <action selector="sortSegmentChanged:" destination="-1" eventType="valueChanged" id="9Ir-uM-ogF"/>

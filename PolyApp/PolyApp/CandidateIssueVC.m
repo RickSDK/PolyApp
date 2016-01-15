@@ -136,7 +136,7 @@
 
 	self.candidateImageView.image = [ObjectiveCScripts cachedImageForRowId:self.candidateObj.candidate_id type:0 dir:@"pics" forceRecache:NO];
 	
-	self.avatarImage.image = [ObjectiveCScripts avatarImageOfType:1];
+	self.avatarImage.image = [ObjectiveCScripts avatarImageThumbSize:YES];
 	
 	self.nameLabel.text=self.candidateObj.name;
 	self.partyLabel.text=[NSString stringWithFormat:@"%@ Party", self.candidateObj.party];
@@ -157,6 +157,7 @@
 
 	[PolyPopupView addPolyPopToView:self.view message:@"PolyApp is designed to be user driven. You can add new quotes and update candidates positions here." polyId:2];
 
+	[self extendTableForGold];
 	[self setupButtons];
 }
 
@@ -365,6 +366,10 @@
 	cell.favoritesLabel.text=(quoteObj.favorites>0)?[NSString stringWithFormat:@"Fav: %d", quoteObj.favorites]:@"";
 	cell.accessoryType= UITableViewCellAccessoryDisclosureIndicator;
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
+	
+	if(self.favQuote_id>0 && self.favQuote_id==quoteObj.quote_id) {
+		cell.backgroundColor= [UIColor yellowColor];
+	}
 	return cell;
 }
 

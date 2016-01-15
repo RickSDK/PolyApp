@@ -29,14 +29,17 @@
 
 @property (strong, nonatomic) IBOutlet UIImageView *circleImageView;
 @property (strong, nonatomic) IBOutlet UIImageView *beliefsView;
+@property (strong, nonatomic) IBOutlet UIImageView *largeImageView;
 @property (strong, nonatomic) IBOutlet UITextField *wallTextField;
 @property (strong, nonatomic) IBOutlet UIButton *followButton;
+@property (strong, nonatomic) IBOutlet UIButton *upgradeButton;
 @property (nonatomic) BOOL followingFlg;
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *imageIndicatorView;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *dataIndicatorView;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *wallIndicatorView;
 
+/*
 @property (strong, nonatomic) IBOutlet UILabel *locationLabel;
 @property (strong, nonatomic) IBOutlet UILabel *createdLabel;
 @property (strong, nonatomic) IBOutlet UILabel *ideologyLabel;
@@ -51,15 +54,11 @@
 @property (strong, nonatomic) IBOutlet UILabel *favQuoteLabel;
 @property (strong, nonatomic) IBOutlet UILabel *favDebateLabel;
 @property (strong, nonatomic) IBOutlet UILabel *favForumLabel;
-
+*/
 
 -(IBAction)followButtonPressed:(id)sender;
 -(IBAction)mainSegmentChanged:(id)sender;
 
--(IBAction)favCartoonButtonPressed:(id)sender;
--(IBAction)favQuoteButtonPressed:(id)sender;
--(IBAction)favForumButtonPressed:(id)sender;
--(IBAction)favDebateButtonPressed:(id)sender;
 -(IBAction)upgradeButtonPressed:(id)sender;
 
 -(IBAction)testResultsButtonPressed:(id)sender;

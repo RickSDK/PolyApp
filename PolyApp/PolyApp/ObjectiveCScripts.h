@@ -79,7 +79,7 @@
 +(void)positionIcon:(UIImageView *)icon govEcon:(int)govEcon govMoral:(int)govMoral bgView:(UIView*)bgView label:(UILabel *)label;
 +(BOOL)isCandidateIssuesComplete:(NSString *)answers;
 + (NSString *)base64EncodeImage:(UIImage *)image;
-+(UIImage *)avatarImageOfType:(int)type;
++(UIImage *)avatarImageThumbSize:(BOOL)thumbFlg;
 +(void)resetFlags;
 +(void)deleteLocalDatabase:(NSManagedObjectContext *)context;
 +(BOOL)chooseLikeOrFavForEntity:(NSString *)entity primaryKey:(NSString *)primaryKey row_id:(int)row_id userField:(NSString *)userField;
@@ -103,5 +103,7 @@
 +(void)changeLevelTo:(int)level;
 +(UIImage *)imageForLevel:(int)level;
 +(BOOL)confirmEditOK:(int)level;
++(void)asyncWebserviceUsingPost:(NSString *)file fieldList:(NSArray *)fieldList valueList:(NSArray *)valueList delegate:(id)delegate;
++(NSString *)validString:(NSString *)string;
 
 @end

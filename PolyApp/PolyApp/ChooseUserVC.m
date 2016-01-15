@@ -31,8 +31,45 @@
 	[self.textFieldElements addObject:self.loginTextField];
 	[self.textFieldElements addObject:self.passwordTextField];
 	
+	self.FBLoginButton.readPermissions =
+	@[@"public_profile", @"email", @"user_friends"];
+	
 	self.loginView.hidden=YES;
+	
+	self.fBUsername = [NSString new];
+	self.fBImageURL = [NSString new];
+	
 }
+
+-(void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[self checkFBUser];
+}
+
+-(void)checkFBUser {
+	if ([FBSDKAccessToken currentAccessToken]) {
+		[self startWebService:@selector(tempWebService) message:nil];
+
+		FBSDKLoginButton *loginButton = [[FBSDKLoginButton alloc] init];
+		loginButton.center = self.view.center;
+		[self.view addSubview:loginButton];
+
+		[[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:@{ @"fields" : @"id,name,picture.width(100).height(100)"}]startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+			if (!error) {
+				self.fBUsername = [result valueForKey:@"name"];
+				self.fBImageURL = [[[result valueForKey:@"picture"] valueForKey:@"data"] valueForKey:@"url"];
+				[ObjectiveCScripts setUserDefaultValue:self.fBImageURL forKey:@"fBImageURL"];
+				UIImage *image = [ObjectiveCScripts imageFromUrl:self.fBImageURL];
+				self.mainPic.image = image;
+				self.imageLarge = [ObjectiveCScripts resizeImage:image size:CGSizeMake(300, 300)];
+				self.imageThumb = [ObjectiveCScripts resizeImage:image size:CGSizeMake(60, 60)];
+				[self startWebService:@selector(mainWebService) message:nil];
+			}
+		}];
+	}
+}
+
 
 -(BOOL)verifySubmit {
 	if(self.userTextField.text.length==0) {
@@ -42,15 +79,36 @@
 	return YES;
 }
 
+-(void)tempWebService
+{
+	@autoreleasepool {
+		NSLog(@"+++%@", self.fBUsername);
+		NSLog(@"+++%@", self.fBImageURL);
+	}
+}
+
 -(void)mainWebService
 {
 	@autoreleasepool {
-		NSArray *nameList = [NSArray arrayWithObjects:@"code", @"username", nil];
-		NSArray *valueList = [NSArray arrayWithObjects:@"123", self.userTextField.text, nil];
+		NSString *userName = self.userTextField.text;
+		NSString *image = @"";
+		NSString *smallImage = @"";
+		NSString *fbFlag = @"N";
+		if(self.fBUsername.length>0) {
+			userName = self.fBUsername;
+			image = [ObjectiveCScripts base64EncodeImage:self.imageLarge];
+			smallImage = [ObjectiveCScripts base64EncodeImage:self.imageThumb];
+			[ObjectiveCScripts setUserDefaultValue:@"fbPics" forKey:@"imgDir"];
+			fbFlag = @"Y";
+		}
+		NSArray *nameList = [NSArray arrayWithObjects:@"code", @"username", @"image", @"smallImage", @"fbFlag", nil];
+		NSArray *valueList = [NSArray arrayWithObjects:@"123",
+							  userName, image, smallImage, fbFlag,
+							  nil];
 		NSString *webAddr = @"http://www.appdigity.com/poly/checkUsername.php";
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
 		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:nil]) {
-			[ObjectiveCScripts setUserDefaultValue:self.userTextField.text forKey:@"userName"];
+			[ObjectiveCScripts setUserDefaultValue:userName forKey:@"userName"];
 			[ObjectiveCScripts resetFlags];
 			NSArray *lines = [responseStr componentsSeparatedByString:@"<br>"];
 			for(NSString *line in lines) {
@@ -58,6 +116,9 @@
 					NSArray *components = [line componentsSeparatedByString:@"|"];
 					if(components.count>0) {
 						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:0] forKey:@"user_id"]; //<--- here!!!
+					}
+					if(components.count>3) {
+						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:3] forKey:@"imgNum"]; //<--- here!!!
 					}
 				}
 			}
@@ -82,7 +143,7 @@
 			for(NSString *line in lines) {
 				if(line.length>7) {
 					NSArray *components = [line componentsSeparatedByString:@"|"];
-					if(components.count>23) {
+					if(components.count>25) {
 						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:0] forKey:@"user_id"];
 						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:1] forKey:@"userName"];
 						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:2] forKey:@"email"];
@@ -107,6 +168,8 @@
 						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:21] forKey:@"CandidateName"];
 						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:22] forKey:@"System"];
 						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:23] forKey:@"VoterType"];
+						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:24] forKey:@"imgDir"];
+						[ObjectiveCScripts setUserDefaultValue:[components objectAtIndex:25] forKey:@"imgNum"];
 						
 						NSString *answers=[components objectAtIndex:18];
 						if(answers.length>20) {
@@ -135,17 +198,27 @@
 		[ObjectiveCScripts showAlertPopup:@"Enter a login" message:@""];
 		return;
 	}
-	if(self.passwordTextField.text.length==0) {
-		[ObjectiveCScripts showAlertPopup:@"Enter a password" message:@""];
-		return;
-	}
 	[self startWebService:@selector(loginWebService) message:@"Logging in..."];
 }
 - (IBAction) cancelPressed: (id) sender {
 	self.loginView.hidden=YES;
 }
 - (IBAction) facebookPressed: (id) sender {
-	[ObjectiveCScripts showAlertPopup:@"Not yet working" message:@""];
+	FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+	[login
+	 logInWithReadPermissions: @[@"public_profile"]
+	 fromViewController:self
+	 handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+		 NSLog(@"+++result.token.userID: %@", result.token.userID);
+		 FBSDKAccessToken *token = result.token;
+		 if (error) {
+			 NSLog(@"Process error");
+		 } else if (result.isCancelled) {
+			 NSLog(@"Cancelled");
+		 } else {
+			 NSLog(@"Logged in");
+		 }
+  }];
 	
 }
 - (IBAction) iPoliticsPressed: (id) sender {

@@ -8,6 +8,7 @@
 
 #import "OptionsVC.h"
 #import "ChooseNationVC.h"
+#import "UpgradeVC.h"
 
 #define kMenu1	@"Change Election Country"
 #define kMenu2	@"Change Election Year"
@@ -25,6 +26,9 @@
 	[self.mainArray addObject:kMenu1];
 	[self.mainArray addObject:kMenu2];
 	[self.mainArray addObject:kMenu3];
+	
+	self.upgradeButton.hidden=[ObjectiveCScripts myLevel]>=2;
+	
     // Do any additional setup after loading the view from its nib.
 }
 
@@ -81,6 +85,13 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return 44;
+}
+
+- (IBAction) upgradeButtonPressed: (id) sender {
+	UpgradeVC *detailViewController = [[UpgradeVC alloc] initWithNibName:@"UpgradeVC" bundle:nil];
+	detailViewController.managedObjectContext = self.managedObjectContext;
+	detailViewController.title = @"Upgrade!";
+	[self.navigationController pushViewController:detailViewController animated:YES];
 }
 
 @end

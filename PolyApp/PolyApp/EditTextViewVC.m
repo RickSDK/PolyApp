@@ -19,7 +19,7 @@
 	[self setTitle:@"Enter Text"];
 	
 	if(self.maxChars==0)
-		self.maxChars=500;
+		self.maxChars=350;
 	
 	self.maxLength=self.maxChars;
 	

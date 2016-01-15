@@ -22,6 +22,8 @@
 @property (nonatomic, retain) NSString *candidateName;
 @property (nonatomic, retain) NSString *created;
 @property (nonatomic, retain) NSString *closestMatch;
+@property (nonatomic, retain) NSString *lastLogin;
+@property (nonatomic, retain) NSString *answers;
 
 @property (nonatomic) int govEcon;
 @property (nonatomic) int govMoral;
@@ -31,6 +33,8 @@
 @property (nonatomic) int level;
 
 @property (nonatomic) int favQuote;
+@property (nonatomic) int favQuoteCandidate;
+@property (nonatomic) int favQuoteIssue;
 @property (nonatomic) int favCartoon;
 @property (nonatomic) int favForum;
 @property (nonatomic) int favDebate;

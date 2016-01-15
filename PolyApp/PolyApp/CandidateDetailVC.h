@@ -22,6 +22,7 @@
 @property (nonatomic, strong) IBOutlet UILabel *ideologyLabel;
 @property (nonatomic, strong) IBOutlet UILabel *matchLabel;
 @property (nonatomic, strong) IBOutlet UILabel *updateMessageLabel;
+@property (nonatomic, strong) IBOutlet UIImageView *largeImageView;
 
 @property (nonatomic, strong) IBOutlet UIButton *saveChangesButton;
 @property (nonatomic, strong) IBOutlet UIButton *cancelChangesButton;
@@ -50,6 +51,9 @@
 @property (nonatomic) BOOL youLikeFlg;
 @property (nonatomic) BOOL yourFavFlg;
 @property (nonatomic) BOOL hideUserFlg;
+@property (nonatomic) int favQuote_id;
+@property (nonatomic) int favQuoteCandidate;
+@property (nonatomic) int favQuoteIssue;
 
 //Admin
 @property (nonatomic, strong) IBOutlet UIView *adminView;

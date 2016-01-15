@@ -13,6 +13,7 @@
                 <outlet property="loginButton" destination="7YB-Lv-09m" id="CpQ-d6-Q8X"/>
                 <outlet property="loginTextField" destination="pbu-rh-gwW" id="cSe-9O-q38"/>
                 <outlet property="loginView" destination="jIe-Do-JC1" id="JAC-Uo-TNs"/>
+                <outlet property="mainPic" destination="epO-bT-YBv" id="qI0-dY-VhX"/>
                 <outlet property="passwordTextField" destination="xxi-3Z-5ff" id="UcE-Tq-BGC"/>
                 <outlet property="signupButton" destination="hX5-DL-GXf" id="p9v-BG-7I2"/>
                 <outlet property="userTextField" destination="D2O-Dc-fYN" id="Hk5-Iv-cyn"/>
@@ -135,6 +136,10 @@
                     </subviews>
                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="epO-bT-YBv">
+                    <rect key="frame" x="120" y="225" width="80" height="80"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </imageView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>

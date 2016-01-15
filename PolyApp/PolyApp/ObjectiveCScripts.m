@@ -173,16 +173,56 @@
 	reString = [self deformatStringfromWebService:reString];
 //	responseString = [NSString stringWithFormat:@"%@", reString];
 	
-	if(responseData==nil)
-		[ObjectiveCScripts showAlertPopup:@"WebService Error" message:@"Not able to connect to the server. Check internet connections."];
+//	if(responseData==nil)
+//		[ObjectiveCScripts showAlertPopup:@"WebService Error" message:@"Not able to connect to the server. Check internet connections."];
 	
 	return reString;
 }
 
++(void)asyncWebserviceUsingPost:(NSString *)file fieldList:(NSArray *)fieldList valueList:(NSArray *)valueList delegate:(id)delegate
+{
+	if([fieldList count] != [valueList count]) {
+		[ObjectiveCScripts showAlertPopup:@"Error" message:@"Invalid field list."];
+		return;
+	}
+	int i=0;
+	NSMutableString *fieldStr= [NSMutableString new];
+	for(NSString *name in fieldList)
+		[fieldStr appendFormat:@"&%@=%@", name, [ObjectiveCScripts formatStringForWebService:[valueList objectAtIndex:i++]]];
+	
+	NSData *postData = [fieldStr dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
+	NSString *postLength = [NSString stringWithFormat:@"%lu",(unsigned long)[postData length]];
+	
+	
+	NSURL *url = [NSURL URLWithString:[self webAddressForFile:file]];
+	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+	[request setURL:url];
+	
+	[request setHTTPMethod:@"POST"];
+	[request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+	[request setHTTPBody:postData];
+	
+	NSURLConnection *theConnection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate];
+	
+	if (!theConnection) {
+		[ObjectiveCScripts showAlertPopup:@"Error" message:@"No internet connection."];
+	}
+	
+}
+
++(NSString *)webAddressForFile:(NSString *)file
+{
+	NSString *server = @"http://www.appdigity.com/poly";
+	return [NSString stringWithFormat:@"%@/%@", server, file];
+}
+
+
+
 +(BOOL)validateStandardResponse:(NSString *)responseStr delegate:(id)delegate
 {
 	if(responseStr==nil || [responseStr length]==0)
-		responseStr = @"No Response Sent.";
+		responseStr = @"No Response.";
 	
 	if([responseStr length]>=7 && [[responseStr substringToIndex:7] isEqualToString:@"Success"]) {
 		return YES;
@@ -190,7 +230,7 @@
 	else {
 		if([responseStr length]>100)
 			responseStr = [responseStr substringToIndex:100];
-		[self showAlertPopup:@"Error" message:responseStr];
+		[self showAlertPopup:@"Server Error" message:responseStr];
 		return NO;
 	}
 }
@@ -1027,17 +1067,21 @@
 	//return imgData.base64Encoding;
 }
 
-+(UIImage *)avatarImageOfType:(int)type {
-	int imgType = [[ObjectiveCScripts getUserDefaultValue:@"imgType"] intValue];
-	if(imgType==2) {
-		return [ObjectiveCScripts cachedImageForRowId:[ObjectiveCScripts myUserId] type:type dir:@"userPics" forceRecache:NO];
-	}
++(UIImage *)avatarImageThumbSize:(BOOL)thumbFlg {
 	int closestMatchId = [[ObjectiveCScripts getUserDefaultValue:@"ClosestMatchId"] intValue];
 	if(closestMatchId>0) {
-		UIImage *image = [ObjectiveCScripts cachedImageForRowId:closestMatchId type:type dir:@"pics" forceRecache:NO];
-		if(image)
-			return image;
+		NSString *imgDir = [ObjectiveCScripts getUserDefaultValue:@"imgDir"];
+		int imgNum = [[ObjectiveCScripts getUserDefaultValue:@"imgNum"] intValue];
+		NSLog(@"avatar imgDir: %@ [%d]", imgDir, imgNum);
+		if(imgDir.length==0) {
+			imgDir = @"pics";
+			[ObjectiveCScripts setUserDefaultValue:imgDir forKey:@"imgDir"];
+			imgNum=closestMatchId;
+			[ObjectiveCScripts setUserDefaultValue:[NSString stringWithFormat:@"%d", imgNum] forKey:@"imgNum"];
+		}
+		return [ObjectiveCScripts cachedImageForRowId:imgNum type:thumbFlg dir:imgDir forceRecache:NO];
 	}
+
 	return [UIImage imageNamed:@"unknown.jpg"];
 }
 
@@ -1197,6 +1241,11 @@
 	}
 	return YES;
 }
+
++(NSString *)validString:(NSString *)string {
+	return (string.length>0)?string:@"";
+}
+
 
 
 

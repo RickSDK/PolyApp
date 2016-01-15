@@ -13,6 +13,10 @@
 #import "CandidateIssueVC.h"
 #import "CoreDataLib.h"
 #import "UpgradeVC.h"
+#import "MultiLineDetailCellWordWrap.h"
+#import "CandidateDetailVC.h"
+#import "CandidateObj.h"
+#import "UserTestResultsVC.h"
 
 @interface UserDetailVC ()
 
@@ -25,27 +29,43 @@
 	
 	[self.textFieldElements addObject:self.wallTextField];
 	self.largeView.hidden=YES;
+	self.upgradeButton.enabled=[ObjectiveCScripts myLevel]<2;
 
+	self.sortSegment.selectedSegmentIndex=1;
+	[self.sortSegment changeSegment];
 	
 	[self setupDataForUser:self.userDataObj];
 	self.followButton.enabled=NO;
 	self.followingLabel.hidden=YES;
+	self.largeImageView.hidden=YES;
+	self.maxLength=200;
 	
 	[self.dataIndicatorView startAnimating];
 	if(self.userDataObj.user_id>0)
 		[self performSelectorInBackground:@selector(loadDataWebService) withObject:nil];
 	else
 		[ObjectiveCScripts showAlertPopup:@"Error" message:@"No uid!"];
+	
+	[self extendTableForGold];
+
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-//	UITouch *touch = [[event allTouches] anyObject];
-//	CGPoint startTouchPosition = [touch locationInView:self.view];
+	UITouch *touch = [[event allTouches] anyObject];
+	CGPoint startTouchPosition = [touch locationInView:self.view];
 	
-	self.largeView.hidden=!self.largeView.hidden;
-//	if(self.largeView.hidden==YES && CGRectContainsPoint(self.beliefsView.frame, startTouchPosition)) {
-//		self.largeView.hidden=NO;
-//	}
+	if(!self.largeImageView.hidden || !self.largeView.hidden) {
+		self.largeImageView.hidden=YES;
+		self.largeView.hidden=YES;
+		self.mainTableView.hidden=NO;
+	} else {
+		self.mainTableView.hidden=YES;
+		if(CGRectContainsPoint(self.mainPic.frame, startTouchPosition)) {
+			self.largeImageView.hidden=!self.largeImageView.hidden;
+		} else {
+			self.largeView.hidden=!self.largeView.hidden;
+		}
+	}
 }
 
 -(void)setupDataForUser:(UserObj *)user {
@@ -58,27 +78,8 @@
 	if(user.candidate_id>0) {
 		self.candidateNameLabel.text = user.candidateName;
 		self.candidateImageView.image = [ObjectiveCScripts cachedCandidateImageForRowId:user.candidate_id thumbFlg:YES];
+
 	}
-	
-	self.locationLabel.text = [NSString stringWithFormat:@"%@, %@", user.state, user.country];
-	if(user.state.length==0)
-		self.locationLabel.text = @"Unknown";
-	self.ideologyLabel.text = user.ideology;
-	self.createdLabel.text = user.created;
-	self.closestMatchLabel.text = user.closestMatch;
-	
-	self.favCartoonButton.enabled=user.favCartoon>0;
-	self.favDebateButton.enabled=user.favDebate>0;
-	self.favForumButton.enabled=user.favForum>0;
-	self.favQuoteButton.enabled=user.favQuote>0;
-	
-	self.favCartoonLabel.hidden=user.favCartoon>0;
-	self.favDebateLabel.hidden=user.favDebate>0;
-	self.favForumLabel.hidden=user.favForum>0;
-	self.favQuoteLabel.hidden=user.favQuote>0;
-	
-	self.userLevelImageView.image = [ObjectiveCScripts imageForLevel:user.level];
-	self.userLevelName.text = [ObjectiveCScripts userNameForLevel:user.level];
 	
 	[self.imageIndicatorView startAnimating];
 	[self setupFollowingButton];
@@ -110,15 +111,28 @@
 						[ObjectiveCScripts positionIcon:self.largeCircle govEcon:self.userObj.govEcon govMoral:self.userObj.govMoral bgView:self.largePolyView label:self.largeUserLabel];
 						if(self.followingFlg)
 							[self updateFriend:self.userObj];
+						else
+							[self removeFriend:self.userObj];
 					}
 				}
 			if(self.userObj.user_id==0)
 				[ObjectiveCScripts showAlertPopupWithDelegate:@"Error" message:@"No user data found!" delegate:self tag:1];
-		} else
-			[ObjectiveCScripts showAlertPopup:@"Server Error" message:@"Unable to reach the server. Try again later."];
+		}
+		
 		[self.dataIndicatorView stopAnimating];
 		[self performSelectorInBackground:@selector(loadWallDataWebService) withObject:nil];
 
+	}
+}
+
+-(void)removeFriend:(UserObj *)friend {
+	NSPredicate *predicate= [NSPredicate predicateWithFormat:@"user_id = %d", friend.user_id];
+	NSArray *items = [CoreDataLib selectRowsFromEntity:@"FRIEND" predicate:predicate sortColumn:nil mOC:self.managedObjectContext ascendingFlg:NO];
+	if(items.count>0) {
+		NSManagedObject *mo = [items objectAtIndex:0];
+		[self.managedObjectContext deleteObject:mo];
+		[self.managedObjectContext save:nil];
+		NSLog(@"Deleting friend!");
 	}
 }
 
@@ -219,6 +233,7 @@
 -(void)displayImage:(UserObj *)user {
 	@autoreleasepool {
 		self.mainPic.image = [ObjectiveCScripts cachedImageForRowId:user.imgNum type:0 dir:user.imgDir forceRecache:NO];
+		self.largeImageView.image = [ObjectiveCScripts cachedImageForRowId:user.imgNum type:0 dir:user.imgDir forceRecache:NO];
 		[self.imageIndicatorView stopAnimating];
 	}
 }
@@ -237,6 +252,8 @@
 	self.followingFlg=!self.followingFlg;
 	if(self.followingFlg)
 		[self updateFriend:self.userObj];
+	else
+		[self removeFriend:self.userObj];
 	[self setupFollowingButton];
 	[self performSelectorInBackground:@selector(followWebService) withObject:nil];
 }
@@ -263,24 +280,96 @@
 
 -(IBAction)mainSegmentChanged:(id)sender {
 	[self.sortSegment changeSegment];
-	self.mainTableView.hidden=self.sortSegment.selectedSegmentIndex==1;
 	self.popupView.hidden=self.sortSegment.selectedSegmentIndex==0;
+	[self.mainTableView reloadData];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	NSString *cellIdentifier = [NSString stringWithFormat:@"cellIdentifierSection%dRow%d", (int)indexPath.section, (int)indexPath.row];
-	WallCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+	NSString *cellIdentifier = [NSString stringWithFormat:@"cellIdentifierSection%dRow%d_%d", (int)indexPath.section, (int)indexPath.row, (int)self.sortSegment.selectedSegmentIndex];
 	
-	if(cell==nil)
-		cell = [[WallCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+	if(self.sortSegment.selectedSegmentIndex==0) {
+		WallCell *cell = [[WallCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+		
+		WallObj *wallObj = [self.mainArray objectAtIndex:indexPath.row];
+		[WallCell populateCell:cell withObj:wallObj];
+		
+		cell.accessoryType= UITableViewCellAccessoryNone;
+		cell.selectionStyle = UITableViewCellSelectionStyleNone;
+		return cell;
+	} else {
+		if(indexPath.row==0) {
+			NSMutableArray *titles = [NSMutableArray new];
+			NSMutableArray *values = [NSMutableArray new];
+			NSMutableArray *colors = [NSMutableArray new];
+			
+			[titles addObject:@"Username"];
+			[values addObject:[ObjectiveCScripts validString:self.userObj.userName]];
+			[colors addObject:[UIColor blackColor]];
+			
+			NSString *location = [NSString stringWithFormat:@"%@, %@", self.userObj.state, self.userObj.country];
+			if(self.userObj.state.length==0)
+				location = @"Unknown";
+			[titles addObject:@"Location"];
+			[values addObject:location];
+			[colors addObject:[UIColor blackColor]];
+			
+			[titles addObject:@"Created"];
+			[values addObject:[ObjectiveCScripts validString:self.userObj.created]];
+			[colors addObject:[UIColor blackColor]];
+			[titles addObject:@"Ideology"];
+			[values addObject:[ObjectiveCScripts validString:self.userObj.ideology]];
+			[colors addObject:[UIColor blackColor]];
+			
+			[titles addObject:@"Closest Match"];
+			[values addObject:[ObjectiveCScripts validString:self.userObj.closestMatch]];
+			[colors addObject:[UIColor blackColor]];
+			
+			[titles addObject:@"Level"];
+			[values addObject:[ObjectiveCScripts userNameForLevel:self.userObj.level]];
+			[colors addObject:[UIColor blackColor]];
+			
+			[titles addObject:@"Last Login"];
+			[values addObject:[ObjectiveCScripts validString:self.userObj.lastLogin]];
+			[colors addObject:[UIColor blackColor]];
+			
+			MultiLineDetailCellWordWrap *cell = [[MultiLineDetailCellWordWrap alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier withRows:titles.count labelProportion:.4];
+			
+		
+			cell.titleTextArray = titles;
+			cell.fieldTextArray = values;
+			cell.fieldColorArray = colors;
+			
+			cell.accessoryType= UITableViewCellAccessoryNone;
+			cell.selectionStyle = UITableViewCellSelectionStyleNone;
+			return cell;
+		} else {
+			UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+			
+			NSArray *titles = [NSArray arrayWithObjects:@"None", @"Favorite Cartoon", @"Favorite Quote", @"Favorite Forum", @"Favorite Debate", nil];
+			NSArray *numbers = [NSArray arrayWithObjects:
+								@"0",
+								[NSString stringWithFormat:@"%d", self.userObj.favCartoon],
+								[NSString stringWithFormat:@"%d", self.userObj.favQuote],
+								[NSString stringWithFormat:@"%d", self.userObj.favForum],
+								[NSString stringWithFormat:@"%d", self.userObj.favDebate],
+								nil];
+			
+			int num = [[numbers objectAtIndex:indexPath.row] intValue];
+			if(num>0) {
+				cell.accessoryType= UITableViewCellAccessoryDisclosureIndicator;
+				cell.textLabel.textColor = [UIColor blackColor];
+			} else {
+				cell.accessoryType= UITableViewCellAccessoryNone;
+				cell.textLabel.textColor = [UIColor grayColor];
+			}
+			cell.textLabel.text=[titles objectAtIndex:indexPath.row];
+			cell.selectionStyle = UITableViewCellSelectionStyleNone;
+			return cell;
+
+		}
+	}
 	
-	WallObj *wallObj = [self.mainArray objectAtIndex:indexPath.row];
-	[WallCell populateCell:cell withObj:wallObj];
-	
-	cell.accessoryType= UITableViewCellAccessoryNone;
-	cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	return cell;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -288,10 +377,43 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return self.mainArray.count;
+	if(self.sortSegment.selectedSegmentIndex==0)
+		return self.mainArray.count;
+	else
+		return 5;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	if(self.sortSegment.selectedSegmentIndex==1 && self.userObj.favCartoon>0) {
+		if(indexPath.row==1) {
+			CartoonsVC *detailViewController = [[CartoonsVC alloc] initWithNibName:@"CartoonsVC" bundle:nil];
+			detailViewController.managedObjectContext = self.managedObjectContext;
+			detailViewController.title = @"Cartoons";
+			detailViewController.favoriteCartoon=self.userObj.favCartoon;
+			[self.navigationController pushViewController:detailViewController animated:YES];
+		}
+		if(indexPath.row==2) {
+			NSPredicate *predicate = [NSPredicate predicateWithFormat:@"candidate_id = %d", self.userObj.favQuoteCandidate];
+			NSArray *items = [CoreDataLib selectRowsFromEntity:@"CANDIDATE" predicate:predicate sortColumn:nil mOC:self.managedObjectContext ascendingFlg:NO];
+			if(items.count>0) {
+				NSManagedObject *mo = [items objectAtIndex:0];
+				CandidateObj *candidateObj = [CandidateObj objectFromManagedObject:mo];
+				[self gotoCandidateQuote:candidateObj];
+			}
+		}
+	}
+}
+
+
+-(void)gotoCandidateQuote:(CandidateObj *)candidateObj {
+	CandidateDetailVC *detailViewController = [[CandidateDetailVC alloc] initWithNibName:@"CandidateDetailVC" bundle:nil];
+	detailViewController.managedObjectContext = self.managedObjectContext;
+	detailViewController.title = candidateObj.name;
+	detailViewController.candidateObj = candidateObj;
+	detailViewController.favQuoteCandidate = self.userObj.favQuoteCandidate;
+	detailViewController.favQuoteIssue = self.userObj.favQuoteIssue;
+	detailViewController.favQuote_id=self.userObj.favQuote;
+	[self.navigationController pushViewController:detailViewController animated:YES];
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -305,25 +427,26 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-	WallObj *wallObj = [self.mainArray objectAtIndex:indexPath.row];
-	return [WallCell heightForCellWithText:wallObj.message];
+	if(self.sortSegment.selectedSegmentIndex==0) {
+		WallObj *wallObj = [self.mainArray objectAtIndex:indexPath.row];
+		return [WallCell heightForCellWithText:wallObj.message];
+	} else {
+		if(indexPath.row==0)
+			return 18*7+5;
+		else
+			return 44;
+	}
 }
 
--(IBAction)favCartoonButtonPressed:(id)sender {
-	CartoonsVC *detailViewController = [[CartoonsVC alloc] initWithNibName:@"CartoonsVC" bundle:nil];
-	detailViewController.managedObjectContext = self.managedObjectContext;
-	detailViewController.title = @"Cartoons";
-	detailViewController.favoriteCartoon=self.userObj.favCartoon;
-	[self.navigationController pushViewController:detailViewController animated:YES];
-}
--(IBAction)favQuoteButtonPressed:(id)sender {
-}
--(IBAction)favForumButtonPressed:(id)sender {
-}
--(IBAction)favDebateButtonPressed:(id)sender {
-}
 -(IBAction)testResultsButtonPressed:(id)sender {
-	[ObjectiveCScripts showAlertPopup:@"Notice" message:@"You must be a Silver member to see results. Please Upgrade!"];
+	if([ObjectiveCScripts myLevel]==0)
+		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"You must be a Silver member to see results. Please Upgrade!"];
+
+	UserTestResultsVC *detailViewController = [[UserTestResultsVC alloc] initWithNibName:@"UserTestResultsVC" bundle:nil];
+	detailViewController.managedObjectContext = self.managedObjectContext;
+	detailViewController.title = self.userObj.userName;
+	detailViewController.uObj = self.userObj;
+	[self.navigationController pushViewController:detailViewController animated:YES];
 }
 
 -(IBAction)upgradeButtonPressed:(id)sender {

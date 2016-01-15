@@ -25,6 +25,7 @@
 @property (strong, nonatomic) NSMutableArray *webServiceElements;
 @property (strong, nonatomic) NSMutableArray *textFieldElements;
 @property (strong, nonatomic) NSMutableArray *mainArray;
+@property (strong, nonatomic) NSMutableString *responseString;
 
 //image picker
 @property (strong, nonatomic) IBOutlet UIButton *uploadPhotoButton;
@@ -50,6 +51,7 @@
 -(void)showPhotoActionSheet;
 -(void)resignResponders;
 -(void)returningText:(NSString *)text;
+-(void)extendTableForGold;
 
 - (IBAction) submitButtonPressed: (id) sender;
 - (IBAction) uploadPhotoButtonPressed: (id) sender;

@@ -10,6 +10,7 @@
 #import "ObjectiveCScripts.h"
 #import "SelectListVC.h"
 #import "UpgradeVC.h"
+#import "ChooseAvatarVC.h"
 
 @interface ProfileVC ()
 
@@ -19,7 +20,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	self.mainPic.image = [ObjectiveCScripts avatarImageOfType:0];
+	self.mainPic.image = [ObjectiveCScripts avatarImageThumbSize:NO];
+	
+	self.upgradeButton.enabled=[ObjectiveCScripts myLevel]<2;
 	
 	self.usernameLabel.text = [ObjectiveCScripts getUserDefaultValue:@"userName"];
 	
@@ -53,13 +56,34 @@
 	self.userIdLabel.text = [NSString stringWithFormat:@"%d", [ObjectiveCScripts myUserId]];
 	self.versionLabel.text = [ObjectiveCScripts getProjectDisplayVersion];
 	
+	if([ObjectiveCScripts getUserDefaultValue:@"firstName"].length==0) {
+		self.emailField.enabled=NO;
+		self.emailField.alpha=.4;
+		self.passwordField.enabled=NO;
+		self.passwordField.alpha=.4;
+		self.confirmField.enabled=NO;
+		self.confirmField.alpha=.4;
+		self.lastNameField.enabled=NO;
+		self.lastNameField.alpha=.4;
+	}
+	
 }
 
 -(BOOL)textField:(UITextField *)textFieldlocal shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
 	self.rightButton.enabled=YES;
 	self.updateProfileButton.enabled=YES;
+	self.maxLength=25;
+	if (textFieldlocal == self.yearBornField)
+		self.maxLength=4;
+	if (textFieldlocal == self.emailField)
+		self.maxLength=50;
+
 	return [ObjectiveCScripts handleTextField:textFieldlocal.text string:string max:self.maxLength];
+}
+
+-(IBAction)drawMainPic:(UIImage *)image {
+	self.mainPic.image=image;
 }
 
 - (IBAction) updateProfileButtonPressed: (id) sender {
@@ -72,26 +96,16 @@
 		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Fill in a first name"];
 		return;
 	}
-	if(self.lastNameField.text.length==0) {
-		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Fill in a last name"];
-		return;
-	}
 	int yearBorn=[self.yearBornField.text intValue];
 	if(yearBorn<1900 || yearBorn>=[ObjectiveCScripts nowYear]) {
-		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Fill in a valid year born"];
+		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Fill in a valid year born (YYYY)."];
 		return;
 	}
-	if(self.emailField.text.length==0) {
-		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Fill in an email address"];
-		return;
-	}
-	if(self.passwordField.text.length==0) {
-		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Fill in a password"];
-		return;
-	}
-	if(![self.passwordField.text isEqualToString:self.confirmField.text]) {
-		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Password do not match"];
-		return;
+	if(self.passwordField.text.length>0) {
+		if(![self.passwordField.text isEqualToString:self.confirmField.text]) {
+			[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Password do not match"];
+			return;
+		}
 	}
 	if([@"Country" isEqualToString:self.countryButton.titleLabel.text]) {
 		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Choose a Country"];
@@ -105,6 +119,10 @@
 
 }
 
+-(NSString *)validString:(NSString *)string {
+	return (string.length>0)?string:@"";
+}
+
 -(void)postProfileWebServiceCall {
 	@autoreleasepool {
 		NSString *sex = (self.sexSegment.selectedSegmentIndex==0)?@"M":@"F";
@@ -112,14 +130,14 @@
 							 @"Year", @"ClosestMatchName", @"CandidateName", nil];
 		NSArray *valueList = [NSArray arrayWithObjects:
 							  [ObjectiveCScripts getUserDefaultValue:@"userName"],
-							  self.firstNameField.text,
-							  self.lastNameField.text,
-							  self.emailField.text,
-							  self.passwordField.text,
-							  self.stateButton.titleLabel.text,
-							  self.countryButton.titleLabel.text,
+							  [self validString:self.firstNameField.text],
+							  [self validString:self.lastNameField.text],
+							  [self validString:self.emailField.text],
+							  [self validString:self.passwordField.text],
+							  [self validString:self.stateButton.titleLabel.text],
+							  [self validString:self.countryButton.titleLabel.text],
 							  sex,
-							  self.yearBornField.text,
+							  [self validString:self.yearBornField.text],
 							  [ObjectiveCScripts getUserDefaultValue:@"CandidateId"],
 							  [ObjectiveCScripts getUserDefaultValue:@"ClosestMatchId"],
 							  [NSString stringWithFormat:@"%d", [ObjectiveCScripts myLevel]],
@@ -202,7 +220,16 @@
 }
 
 - (IBAction) changeAvatarButtonPressed: (id) sender {
-	[ObjectiveCScripts showAlertPopup:@"Upgrade!" message:@"You must be a silver member to change your avatar. Click the upgrade button below."];
+	if([ObjectiveCScripts myLevel]==0) {
+		[ObjectiveCScripts showAlertPopup:@"Upgrade!" message:@"You must be a silver member to change your avatar. Click the upgrade button below."];
+		return;
+	}
+	ChooseAvatarVC *detailViewController = [[ChooseAvatarVC alloc] initWithNibName:@"ChooseAvatarVC" bundle:nil];
+	detailViewController.managedObjectContext = self.managedObjectContext;
+	detailViewController.title = @"Choose Avatar";
+	detailViewController.callBackViewController	= self;
+	[self.navigationController pushViewController:detailViewController animated:YES];
+
 }
 
 -(void)postPhotoUpload {

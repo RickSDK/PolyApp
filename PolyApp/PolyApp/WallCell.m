@@ -96,6 +96,8 @@
 
 +(void)populateCell:(WallCell *)cell withObj:(WallObj *)obj {
 	cell.messageLabel.text=obj.message;
+	if(obj.recipName.length>0 && obj.redirectedFlg)
+		cell.messageLabel.text = [NSString stringWithFormat:@"@%@: %@", obj.recipName, obj.message];
 	cell.usernameLabel.text=obj.username;
 	cell.createdLabel.text=obj.created;
 	[cell.userButton setBackgroundImage:[ObjectiveCScripts cachedImageForRowId:obj.imgNum type:1 dir:obj.imgDir forceRecache:NO] forState:UIControlStateNormal];

@@ -35,6 +35,7 @@
 		self.sourceTextField.text=self.quoteObj.source;
 		self.yearTextField.text=self.quoteObj.year;
 	}
+	[self extendTableForGold];
 	
 }
 

@@ -20,6 +20,7 @@
     [super viewDidLoad];
 	[ObjectiveCScripts updateFlagForNumber:1 toString:@""];
 	[self startWebService:@selector(loadWallDataWebService) message:nil];
+	[self extendTableForGold];
 }
 
 -(void)loadWallDataWebService {

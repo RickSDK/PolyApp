@@ -32,11 +32,11 @@
 		self.bgView.layer.borderWidth = 1.;
 		[self.contentView addSubview:self.bgView];
 		
-		self.pic = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 44)];
+		self.pic = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 30, 30)];
 		self.pic.image = [UIImage imageNamed:@"marco.jpg"];
 		[self.bgView addSubview:self.pic];
 		
-		self.yellowBlob = [[UIImageView alloc] initWithFrame:CGRectMake(210, 0, 50, 44)];
+		self.yellowBlob = [[UIImageView alloc] initWithFrame:CGRectMake(210, 5, 40, 30)];
 		self.yellowBlob.image = [UIImage imageNamed:@"new.png"];
 		[self.bgView addSubview:self.yellowBlob];
 		

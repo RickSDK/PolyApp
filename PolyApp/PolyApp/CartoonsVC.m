@@ -104,6 +104,8 @@
 	self.largeImageSize = 740;
 	self.skipNumber=0;
 	
+	[self extendTableForGold];
+	
 }
 
 -(void)addButtonPressed {
@@ -122,7 +124,7 @@
 	if([ObjectiveCScripts getUserDefaultValue:imageName].length==0) {
 		self.cacheCount++;
 		[cell.activityIndicator startAnimating];
-		cell.pic.image=nil;
+		cell.pic.image=[ObjectiveCScripts cachedImageForRowId:cartoonObj.cartoon_id type:1 dir:@"cartoons" forceRecache:NO];
 		cell.bgView.backgroundColor=[UIColor grayColor];
 		[self performSelectorInBackground:@selector(cacheImage:) withObject:[NSString stringWithFormat:@"%d", cartoonObj.cartoon_id]];
 	} else {

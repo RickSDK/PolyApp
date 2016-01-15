@@ -85,6 +85,15 @@
 		6BB47FD41C1F7E0A007A0BFC /* gwb.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6BB47FD31C1F7E0A007A0BFC /* gwb.jpg */; };
 		6BB47FD61C1F7E0F007A0BFC /* marco.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6BB47FD51C1F7E0F007A0BFC /* marco.jpg */; };
 		6BB47FDC1C1F8C80007A0BFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BB47FDB1C1F8C80007A0BFC /* StoreKit.framework */; };
+		6BC28F831C47231E008BEAEC /* UserTestResultsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BC28F811C47231E008BEAEC /* UserTestResultsVC.m */; };
+		6BC28F841C47231E008BEAEC /* UserTestResultsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BC28F821C47231E008BEAEC /* UserTestResultsVC.xib */; };
+		6BC28F881C47414E008BEAEC /* ChooseAvatarVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BC28F861C47414E008BEAEC /* ChooseAvatarVC.m */; };
+		6BC28F891C47414E008BEAEC /* ChooseAvatarVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BC28F871C47414E008BEAEC /* ChooseAvatarVC.xib */; };
+		6BC28F911C48564B008BEAEC /* FBAudienceNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC28F8C1C48564B008BEAEC /* FBAudienceNetwork.framework */; };
+		6BC28F921C48564C008BEAEC /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC28F8D1C48564B008BEAEC /* FBSDKCoreKit.framework */; };
+		6BC28F931C48564D008BEAEC /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC28F8E1C48564B008BEAEC /* FBSDKLoginKit.framework */; };
+		6BC28F941C48564D008BEAEC /* FBSDKMessengerShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC28F8F1C48564B008BEAEC /* FBSDKMessengerShareKit.framework */; };
+		6BC28F951C48564D008BEAEC /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC28F901C48564B008BEAEC /* FBSDKShareKit.framework */; };
 		6BC8B5FC1C29FA5900D60D7D /* QuotesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BC8B5FA1C29FA5900D60D7D /* QuotesVC.m */; };
 		6BC8B5FD1C29FA5900D60D7D /* QuotesVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BC8B5FB1C29FA5900D60D7D /* QuotesVC.xib */; };
 		6BC8B6001C2A0EA000D60D7D /* QuoteObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BC8B5FF1C2A0EA000D60D7D /* QuoteObj.m */; };
@@ -300,6 +309,17 @@
 		6BB47FD51C1F7E0F007A0BFC /* marco.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = marco.jpg; sourceTree = "<group>"; };
 		6BB47FDA1C1F87AB007A0BFC /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
 		6BB47FDB1C1F8C80007A0BFC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		6BC28F801C47231E008BEAEC /* UserTestResultsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTestResultsVC.h; sourceTree = "<group>"; };
+		6BC28F811C47231E008BEAEC /* UserTestResultsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTestResultsVC.m; sourceTree = "<group>"; };
+		6BC28F821C47231E008BEAEC /* UserTestResultsVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserTestResultsVC.xib; sourceTree = "<group>"; };
+		6BC28F851C47414E008BEAEC /* ChooseAvatarVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChooseAvatarVC.h; sourceTree = "<group>"; };
+		6BC28F861C47414E008BEAEC /* ChooseAvatarVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChooseAvatarVC.m; sourceTree = "<group>"; };
+		6BC28F871C47414E008BEAEC /* ChooseAvatarVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChooseAvatarVC.xib; sourceTree = "<group>"; };
+		6BC28F8C1C48564B008BEAEC /* FBAudienceNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBAudienceNetwork.framework; sourceTree = "<group>"; };
+		6BC28F8D1C48564B008BEAEC /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		6BC28F8E1C48564B008BEAEC /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
+		6BC28F8F1C48564B008BEAEC /* FBSDKMessengerShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKMessengerShareKit.framework; sourceTree = "<group>"; };
+		6BC28F901C48564B008BEAEC /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		6BC8B5F91C29FA5900D60D7D /* QuotesVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuotesVC.h; sourceTree = "<group>"; };
 		6BC8B5FA1C29FA5900D60D7D /* QuotesVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuotesVC.m; sourceTree = "<group>"; };
 		6BC8B5FB1C29FA5900D60D7D /* QuotesVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuotesVC.xib; sourceTree = "<group>"; };
@@ -424,7 +444,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6BC28F911C48564B008BEAEC /* FBAudienceNetwork.framework in Frameworks */,
+				6BC28F921C48564C008BEAEC /* FBSDKCoreKit.framework in Frameworks */,
+				6BC28F931C48564D008BEAEC /* FBSDKLoginKit.framework in Frameworks */,
+				6BC28F951C48564D008BEAEC /* FBSDKShareKit.framework in Frameworks */,
 				6B46D5301C20811600EDCCF9 /* iAd.framework in Frameworks */,
+				6BC28F941C48564D008BEAEC /* FBSDKMessengerShareKit.framework in Frameworks */,
 				6BB47FDC1C1F8C80007A0BFC /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -462,6 +487,9 @@
 				6B46D5371C20853400EDCCF9 /* ProfileVC.h */,
 				6B46D5381C20853400EDCCF9 /* ProfileVC.m */,
 				6B46D5391C20853400EDCCF9 /* ProfileVC.xib */,
+				6BC28F851C47414E008BEAEC /* ChooseAvatarVC.h */,
+				6BC28F861C47414E008BEAEC /* ChooseAvatarVC.m */,
+				6BC28F871C47414E008BEAEC /* ChooseAvatarVC.xib */,
 				6B5578401C385528001FBFC0 /* UpgradeVC.h */,
 				6B5578411C385528001FBFC0 /* UpgradeVC.m */,
 				6B5578421C385528001FBFC0 /* UpgradeVC.xib */,
@@ -525,6 +553,9 @@
 				6BFC20411C36FDFD00409FD6 /* UserDetailVC.h */,
 				6BFC20421C36FDFD00409FD6 /* UserDetailVC.m */,
 				6BFC20431C36FDFD00409FD6 /* UserDetailVC.xib */,
+				6BC28F801C47231E008BEAEC /* UserTestResultsVC.h */,
+				6BC28F811C47231E008BEAEC /* UserTestResultsVC.m */,
+				6BC28F821C47231E008BEAEC /* UserTestResultsVC.xib */,
 				6B46D55F1C2085D200EDCCF9 /* ChartsVC.h */,
 				6B46D5601C2085D200EDCCF9 /* ChartsVC.m */,
 				6B46D5611C2085D200EDCCF9 /* ChartsVC.xib */,
@@ -592,6 +623,11 @@
 		6BB47F4F1C1F6D97007A0BFC = {
 			isa = PBXGroup;
 			children = (
+				6BC28F8C1C48564B008BEAEC /* FBAudienceNetwork.framework */,
+				6BC28F8D1C48564B008BEAEC /* FBSDKCoreKit.framework */,
+				6BC28F8E1C48564B008BEAEC /* FBSDKLoginKit.framework */,
+				6BC28F8F1C48564B008BEAEC /* FBSDKMessengerShareKit.framework */,
+				6BC28F901C48564B008BEAEC /* FBSDKShareKit.framework */,
 				6B46D52F1C20811600EDCCF9 /* iAd.framework */,
 				6BB47FDB1C1F8C80007A0BFC /* StoreKit.framework */,
 				6BB47F5A1C1F6D97007A0BFC /* PolyApp */,
@@ -882,6 +918,7 @@
 				6BAFDFD61C20F04E0025AB16 /* fb.png in Resources */,
 				6BD7C4E21C2264660034C77C /* AddCandidateVC.xib in Resources */,
 				6BCF80181C3D8EF2004A8434 /* Icon-180.png in Resources */,
+				6BC28F841C47231E008BEAEC /* UserTestResultsVC.xib in Resources */,
 				6BCF80371C3F6135004A8434 /* checkMark.jpg in Resources */,
 				6BD7C4F41C24CE590034C77C /* circle.png in Resources */,
 				6B5578491C386776001FBFC0 /* EditTextViewVC.xib in Resources */,
@@ -893,6 +930,7 @@
 				6B46D5451C20856000EDCCF9 /* YourWallVC.xib in Resources */,
 				6BC8B60F1C2F0D8F00D60D7D /* level0.png in Resources */,
 				6BCF80461C41AE20004A8434 /* QuoteTestResultsVC.xib in Resources */,
+				6BC28F891C47414E008BEAEC /* ChooseAvatarVC.xib in Resources */,
 				6BFC201E1C34705400409FD6 /* ForumPostVC.xib in Resources */,
 				6BCF801A1C3D8EF2004A8434 /* Icon@2x.png in Resources */,
 				6B46D5761C20C45400EDCCF9 /* icon3.jpg in Resources */,
@@ -1024,6 +1062,7 @@
 				6BD7C4FC1C2516A30034C77C /* CustomLabel.m in Sources */,
 				6BB47FC01C1F7368007A0BFC /* WebServiceView.m in Sources */,
 				6B46D56D1C20BFA900EDCCF9 /* MainMenuCell.m in Sources */,
+				6BC28F831C47231E008BEAEC /* UserTestResultsVC.m in Sources */,
 				6BFC20271C3587CB00409FD6 /* DebateCell.m in Sources */,
 				6BB1AFC31C443591002005C8 /* AboutVC.m in Sources */,
 				6BFC20111C3452AD00409FD6 /* QuoteTestObj.m in Sources */,
@@ -1038,6 +1077,7 @@
 				6BD7C5051C25D7820034C77C /* OptionsVC.m in Sources */,
 				6BC8B61B1C310C5800D60D7D /* IssueCompareVC.m in Sources */,
 				6BFC203F1C36FDD600409FD6 /* UsersVC.m in Sources */,
+				6BC28F881C47414E008BEAEC /* ChooseAvatarVC.m in Sources */,
 				6BFC204E1C37572600409FD6 /* WallObj.m in Sources */,
 				6BB47FC11C1F7368007A0BFC /* NSDate+ATTDate.m in Sources */,
 				6BFC20511C375C4C00409FD6 /* WallCell.m in Sources */,
@@ -1165,6 +1205,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = PolyApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1180,6 +1224,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = PolyApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

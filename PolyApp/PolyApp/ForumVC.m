@@ -31,6 +31,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
+	[self extendTableForGold];
 
 }
 
@@ -46,13 +47,18 @@
 		NSString *webAddr = @"http://www.appdigity.com/poly/getForumCat.php";
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
 		NSLog(@"+++%@", responseStr);
+		BOOL adminFlg = [ObjectiveCScripts myLevel]>=3;
+		if([ObjectiveCScripts myUserId]<20) //<-- all admins
+			adminFlg=YES;
+		
 		[self.mainArray removeAllObjects];
 		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:nil]) {
 			NSArray *lines = [responseStr componentsSeparatedByString:@"<br>"];
 			for(NSString *line in lines)
 				if(line.length>7) {
 					ForumObj *forumObj = [ForumObj categoryObjectFromLine:line];
-					[self.mainArray addObject:forumObj];
+					if(adminFlg || ![@"Admin" isEqualToString:forumObj.name])
+						[self.mainArray addObject:forumObj];
 				}
 			[ObjectiveCScripts updateFlagForNumber:3 toString:@""];
 		}

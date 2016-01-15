@@ -26,11 +26,15 @@
     [super viewDidLoad];
 	[ObjectiveCScripts updateFlagForNumber:7 toString:@""];
 	[self startWebService:@selector(loadDataWebService) message:@"Loading"];
+	
+	[self extendTableForGold];
+
 }
 
 -(void)loadDataWebService
 {
 	@autoreleasepool {
+		[NSThread sleepForTimeInterval:.1];
 		[self.mainArray removeAllObjects];
 		self.skipNumber=0;
 		self.mainTableView.hidden=YES;
@@ -40,12 +44,13 @@
 
 -(void)doTheWork {
 	self.allowMoreFlg=NO;
-	NSArray *nameList = [NSArray arrayWithObjects:@"username", @"Country", @"orderBy", @"skipNumber", nil];
+	NSArray *nameList = [NSArray arrayWithObjects:@"username", @"Country", @"orderBy", @"skipNumber", @"friendFlg", nil];
 	NSArray *valueList = [NSArray arrayWithObjects:
 						  [ObjectiveCScripts getUserDefaultValue:@"userName"],
 						  [ObjectiveCScripts getUserDefaultValue:@"Country"],
 						  (self.sortSegment.selectedSegmentIndex==0)?@"created":@"name",
 						  [NSString stringWithFormat:@"%d", self.skipNumber],
+						  (self.sortSegment.selectedSegmentIndex==2)?@"Y":@"N",
 						  nil];
 	NSString *webAddr = @"http://www.appdigity.com/poly/getUsers.php";
 	NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
@@ -62,9 +67,7 @@
 					self.allowMoreFlg=YES;
 				}
 			}
-	} else
-		[ObjectiveCScripts showAlertPopup:@"Server Error" message:@"Unable to reach the server. Try again later."];
-	
+	} 	
 	
 	self.mainTableView.hidden=NO;
 	[self stopWebService];

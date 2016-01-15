@@ -159,10 +159,9 @@
 				}
 			[self.mainTableView reloadData];
 			self.forceRecache=NO;
-		} else
-			[ObjectiveCScripts showAlertPopup:@"Server Error" message:@"Unable to reach the server. Try again later."];
-
-		[self.managedObjectContext save:nil];
+			[self.managedObjectContext save:nil];
+		}
+		
 		[ObjectiveCScripts updateFlagForNumber:2 toString:@""];
 
 		[self stopWebService];

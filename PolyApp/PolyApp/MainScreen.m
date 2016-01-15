@@ -69,15 +69,30 @@
 	[self.webServiceElements addObject:self.submitButton];
 	
 	if([ObjectiveCScripts getUserDefaultValue:@"Year"].length>0)
-		[self performSelectorInBackground:@selector(backgroundWebService) withObject:nil];
+		[self bgProcess];
+	
+	[self extendTableForGold];
+	
+	if([ObjectiveCScripts getUserDefaultValue:@"cacheAllThumbnails"].length==0)
+		[self performSelectorInBackground:@selector(cacheAllThumbnails) withObject:nil];
+
 
 //	[self checkUDID];
 	
 }
 
+-(void)bgProcess {
+	NSArray *fieldNames = [NSArray arrayWithObjects:@"username", @"Country", @"year", nil];
+	NSArray *fieldValues = [NSArray arrayWithObjects:[ObjectiveCScripts getUserDefaultValue:@"userName"], [ObjectiveCScripts getUserDefaultValue:@"Country"], [ObjectiveCScripts getUserDefaultValue:@"Year"], nil];
+	[ObjectiveCScripts asyncWebserviceUsingPost:@"getUpdates.php" fieldList:fieldNames valueList:fieldValues delegate:self];
+
+}
+
 -(void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	
+	[self performSelectorInBackground:@selector(displayAvatarImage) withObject:nil];
 	
 	self.nationLabel.text = [ObjectiveCScripts getUserDefaultValue:@"Country"];
 	self.yearLabel.text = [ObjectiveCScripts getUserDefaultValue:@"Year"];
@@ -101,7 +116,6 @@
 		self.usernameLabel.layer.masksToBounds = YES;				// clips background images to rounded corners
 		self.usernameLabel.layer.borderColor = [UIColor blackColor].CGColor;
 		self.usernameLabel.layer.borderWidth = 1.;
-		[self performSelectorInBackground:@selector(displayAvatarImage) withObject:nil];
 	}
 	self.leftUsernameLabel.text = [ObjectiveCScripts getUserDefaultValue:@"userName"];
 	
@@ -143,7 +157,7 @@
 
 -(void)displayAvatarImage {
 	@autoreleasepool {
-		self.matchImageView.image = [ObjectiveCScripts avatarImageOfType:0];
+		self.matchImageView.image = [ObjectiveCScripts avatarImageThumbSize:NO];
 	}
 }
 
@@ -176,8 +190,46 @@
 	[self.navigationController pushViewController:detailViewController animated:YES];
 }
 
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+	BOOL refreshScreen=NO;
+	if(self.responseString.length>0) {
+		if([ObjectiveCScripts validateStandardResponse:self.responseString delegate:nil]) {
+			NSLog(@"+++updates: %@", self.responseString);
+			NSArray *lines = [self.responseString componentsSeparatedByString:@"<br>"];
+			for(NSString *line in lines) {
+				if(line.length>7) {
+					NSArray *components = [line componentsSeparatedByString:@"|"];
+					int i=0;
+					for(NSString *updateDate in components) {
+						if(i> 6 || updateDate.length==0) {
+							i++;
+							continue;
+						}
+						NSString *updateKey = [ObjectiveCScripts updateKeyForNumber:i];
+						NSString *updateFlg = [ObjectiveCScripts updateFlgForNumber:i];
+						if(![updateDate isEqualToString:[ObjectiveCScripts getUserDefaultValue:updateKey]]) {
+							NSLog(@"item %d need updating!!!", i);
+							refreshScreen=YES;
+							[ObjectiveCScripts setUserDefaultValue:@"Y" forKey:updateFlg];
+							[ObjectiveCScripts setUserDefaultValue:updateDate forKey:updateKey];
+							if(i==0) { // issues need updating
+								self.issueUpdateImageView.hidden = NO;
+							}
+						} //<-- if
+						i++;
+					}
+					//					NSString *sysdate = [components objectAtIndex:11];
+					//					[ObjectiveCScripts setUserDefaultValue:sysdate forKey:@"LastLoginTimeStamp"];
+					//					NSLog(@"sysdate: %@", sysdate);
+				}
+			}
+		}
+		if(refreshScreen)
+			[self.mainTableView reloadData];
+	}
+}
 
-
+/*
 -(void)backgroundWebService {
 	@autoreleasepool {
 		BOOL refreshScreen=NO;
@@ -221,8 +273,10 @@
 	}
 	
 }
-
+*/
 -(void)cacheAllThumbnails {
+	NSLog(@"cacheAllThumbnails");
+	[ObjectiveCScripts setUserDefaultValue:@"Y" forKey:@"cacheAllThumbnails"];
 	NSArray *nameList = [NSArray arrayWithObjects:@"username", @"Country", @"year", nil];
 	NSArray *valueList = [NSArray arrayWithObjects:[ObjectiveCScripts getUserDefaultValue:@"userName"], [ObjectiveCScripts getUserDefaultValue:@"Country"], [ObjectiveCScripts getUserDefaultValue:@"Year"], nil];
 	NSString *webAddr = @"http://www.appdigity.com/poly/getCandidates.php";
@@ -293,7 +347,7 @@
 	}
 	if([@"Forum" isEqualToString:title]) {
 		if([ObjectiveCScripts getUserDefaultValue:@"firstName"].length==0) {
-			[ObjectiveCScripts showAlertPopup:@"Notice" message:@"You must update your profile before accessing this feature. Click on your avatar at the top."];
+			[ObjectiveCScripts showAlertPopup:@"Notice" message:@"You must update your profile before accessing this feature. Click on your Avatar at the Top-Left."];
 			return;
 		}
 		ForumVC *detailViewController = [[ForumVC alloc] initWithNibName:@"ForumVC" bundle:nil];
@@ -303,7 +357,7 @@
 	}
 	if([@"Debates" isEqualToString:title]) {
 		if([ObjectiveCScripts getUserDefaultValue:@"firstName"].length==0) {
-			[ObjectiveCScripts showAlertPopup:@"Notice" message:@"You must update your profile before accessing this feature. Click on your avatar at the top."];
+			[ObjectiveCScripts showAlertPopup:@"Notice" message:@"You must update your profile before accessing this feature. Click on your Avatar at the Top-Left."];
 			return;
 		}
 		DebatesVC *detailViewController = [[DebatesVC alloc] initWithNibName:@"DebatesVC" bundle:nil];
@@ -410,10 +464,11 @@
 			[ObjectiveCScripts showAlertPopup:@"Posted!" message:@""];
 		
 		[self stopWebService];
+		self.wallTextField.text=@"";
 	}
 	
 }
-
+/*
 -(void)postWallWebService
 {
 	@autoreleasepool {
@@ -421,13 +476,14 @@
 		NSArray *valueList = [NSArray arrayWithObjects:@"123", self.wallTextField.text, nil];
 		NSString *webAddr = @"http://www.appdigity.com/poly/postWallMessage.php";
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
+		NSLog(@"+++postWallMessage.php %@", responseStr);
 		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:nil]) {
 			[ObjectiveCScripts showAlertPopupWithDelegate:@"Success!" message:@"" delegate:self tag:1];
 		}
 		[self stopWebService];
 	}
 }
-
+*/
 
 
 

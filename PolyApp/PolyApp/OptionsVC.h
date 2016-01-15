@@ -11,4 +11,8 @@
 
 @interface OptionsVC : TemplateVC
 
+@property (strong, nonatomic) IBOutlet UIButton *upgradeButton;
+
+- (IBAction) upgradeButtonPressed: (id) sender;
+
 @end

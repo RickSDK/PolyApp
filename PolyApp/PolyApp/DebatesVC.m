@@ -43,6 +43,8 @@
 	[self.textFieldElements addObject:self.opponentPositionTextField];
 	[self.textFieldElements addObject:self.openingTextView];
 
+	[self extendTableForGold];
+
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addButtonPressed)];
 }
 

@@ -91,6 +91,8 @@
 
 	}
 	[self.webServiceElements addObject:self.rightButton];
+	[self extendTableForGold];
+
 }
 
 

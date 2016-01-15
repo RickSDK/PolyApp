@@ -34,6 +34,8 @@
 	self.maxLength=40;
 	self.textViewTitle = @"Message Body";
 	
+	[self extendTableForGold];
+	
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addButtonPressed)];
 
 }
@@ -50,6 +52,7 @@
 							  nil];
 		NSString *webAddr = @"http://www.appdigity.com/poly/getForumTopics.php";
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
+		NSLog(@"+++getForumTopics.php: %@", responseStr);
 		NSString *systemTimeStamp = @"";
 		[self.mainArray removeAllObjects];
 		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:nil]) {

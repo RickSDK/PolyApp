@@ -31,7 +31,7 @@
 	UserObj *obj = [UserObj new];
 	
 	NSArray *components = [line componentsSeparatedByString:@"|"];
-	if(components.count>18) {
+	if(components.count>22) {
 		obj.user_id = [[components objectAtIndex:0] intValue];
 		obj.userName = [components objectAtIndex:1];
 		obj.ideology = [components objectAtIndex:2];
@@ -54,6 +54,10 @@
 		obj.favForum = [[components objectAtIndex:16] intValue];
 		obj.favDebate = [[components objectAtIndex:17] intValue];
 		obj.favCartoon = [[components objectAtIndex:18] intValue];
+		obj.lastLogin = [components objectAtIndex:19];
+		obj.answers = [components objectAtIndex:20];
+		obj.favQuoteCandidate = [[components objectAtIndex:21] intValue];
+		obj.favQuoteIssue = [[components objectAtIndex:22] intValue];
 	}
 	return obj;
 }

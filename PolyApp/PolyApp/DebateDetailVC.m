@@ -79,6 +79,7 @@
 	if(self.debateObj.currentUser==[ObjectiveCScripts myUserId] && [@"Active" isEqualToString:self.debateObj.status])
 		self.popupView.hidden=!self.popupView.hidden;
 
+	[self extendTableForGold];
 	
 
 }

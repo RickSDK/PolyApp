@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "TemplateVC.h"
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @interface ChooseUserVC : TemplateVC
 
@@ -20,6 +22,11 @@
 @property (strong, nonatomic) IBOutlet UITextField *userTextField;
 @property (strong, nonatomic) IBOutlet UITextField *loginTextField;
 @property (strong, nonatomic) IBOutlet UITextField *passwordTextField;
+@property (weak, nonatomic) IBOutlet FBSDKLoginButton *FBLoginButton;
+
+@property (strong, nonatomic) NSString *fBUsername;
+@property (strong, nonatomic) NSString *fBImageURL;
+
 @property (nonatomic) BOOL *showLoginFlg;
 
 - (IBAction) loginPressed: (id) sender;

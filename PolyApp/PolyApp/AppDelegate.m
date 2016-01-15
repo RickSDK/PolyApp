@@ -18,6 +18,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	
+	[[FBSDKApplicationDelegate sharedInstance] application:application
+							 didFinishLaunchingWithOptions:launchOptions];
 	
 	self.navigationController = [[UINavigationController alloc] init];
 	MainScreen *rootViewController = (MainScreen *)[self.navigationController topViewController];
@@ -54,6 +56,7 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+	[FBSDKAppEvents activateApp];
 	// Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
@@ -62,6 +65,18 @@
 	// Saves changes in the application's managed object context before the application terminates.
 	[self saveContext];
 }
+
+- (BOOL)application:(UIApplication *)application
+			openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+		 annotation:(id)annotation {
+	return [[FBSDKApplicationDelegate sharedInstance] application:application
+														  openURL:url
+												sourceApplication:sourceApplication
+													   annotation:annotation];
+}
+
+
 
 #pragma mark - Core Data stack
 

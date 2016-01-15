@@ -20,18 +20,6 @@
 
 @implementation CandidateDetailVC
 
--(void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-	
-
-	self.updateMessageLabel.hidden = [ObjectiveCScripts isCandidateIssuesComplete:self.candidateObj.answers];
-	[self updateStuff];
-	[self.mainTableView reloadData];
-	
-	[self performSelectorInBackground:@selector(backgroundWebService) withObject:nil];
-}
-
 -(void)updateStuff {
 	self.ideologyLabel.text = self.candidateObj.ideology;
 	
@@ -90,6 +78,7 @@
 	self.cancelChangesButton.hidden=YES;
 	self.editCandidateView.hidden=YES;
 	self.adminView.hidden=YES;
+	self.largeImageView.hidden=YES;
 	
 	[self checkSync];
 	
@@ -122,7 +111,41 @@
 	[self.likeFavBar setupLikeFavBarButtonsForTarget:self likeSelector:@selector(likeButtonPressed) favSelector:@selector(favButtonPressed)];
 	
 	[self loadIssues];
+	
+	if(self.favQuoteCandidate>0)
+		[self performSelectorInBackground:@selector(loadFavQuote) withObject:nil];
 }
+
+-(void)loadFavQuote {
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"issue_id = %d", self.favQuoteIssue];
+	NSArray *items = [CoreDataLib selectRowsFromEntity:@"ISSUE" predicate:predicate sortColumn:@"issue_id" mOC:self.managedObjectContext ascendingFlg:YES];
+	if(items.count>0) {
+		NSManagedObject *mo = [items objectAtIndex:0];
+		IssueObj *issueObj = [IssueObj objectFromManagedObject:mo];
+		CandidateIssueVC *detailViewController = [[CandidateIssueVC alloc] initWithNibName:@"CandidateIssueVC" bundle:nil];
+		detailViewController.managedObjectContext = self.managedObjectContext;
+		detailViewController.title = @"Favorite Quote";
+		detailViewController.candidateObj = self.candidateObj;
+		detailViewController.issueObj = issueObj;
+		detailViewController.favQuote_id=self.favQuote_id;
+		detailViewController.callbackViewController=self;
+		[self.navigationController pushViewController:detailViewController animated:YES];
+	}
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	
+	self.updateMessageLabel.hidden = [ObjectiveCScripts isCandidateIssuesComplete:self.candidateObj.answers];
+	[self updateStuff];
+	[self.mainTableView reloadData];
+	
+	[self performSelectorInBackground:@selector(backgroundWebService) withObject:nil];
+}
+
+
 
 -(void)displayLikeFavBar {
 	[self.likeFavBar displayLikeFavBarLikes:self.candidateObj.likes favorites:self.candidateObj.favorites youLikeFlg:self.youLikeFlg yourFavFlg:self.yourFavFlg];
@@ -200,8 +223,10 @@
 -(void)displayImage {
 	@autoreleasepool {
 		UIImage *image = [ObjectiveCScripts cachedImageForRowId:self.candidateObj.candidate_id type:0 dir:@"pics" forceRecache:self.forceRecache];
-		if(image)
+		if(image) {
 			self.mainPic.image = image;
+			self.largeImageView.image = image;
+		}
 		
 		if(self.forceRecache) {
 			[ObjectiveCScripts cachedImageForRowId:self.candidateObj.candidate_id type:1 dir:@"pics" forceRecache:self.forceRecache];
@@ -276,7 +301,19 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [[event allTouches] anyObject];
 	CGPoint startTouchPosition = [touch locationInView:self.view];
-	
+	if(self.largeImageView.hidden && self.largeGraphicView.hidden && CGRectContainsPoint(self.mainPic.frame, startTouchPosition)) {
+		self.largeImageView.hidden=NO;
+		self.mainTableView.hidden=YES;
+		self.rightButton.enabled=NO;
+		return;
+	}
+	if(self.largeImageView.hidden==NO) {
+		self.largeImageView.hidden=YES;
+		self.mainTableView.hidden=NO;
+		self.rightButton.enabled=YES;
+		return;
+	}
+
 	
 	if(self.largeGraphicView.hidden==YES && !self.editMode && CGRectContainsPoint(self.graphicView.frame, startTouchPosition)) {
 		self.largeGraphicView.hidden=NO;
@@ -302,6 +339,7 @@
 - (IBAction) xButtonPressed: (id) sender {
 	self.largeGraphicView.hidden=YES;
 	self.candidateIdeologyView.hidden=YES;
+	self.rightButton.enabled=YES;
 }
 
 -(void)postPhotoUpload {

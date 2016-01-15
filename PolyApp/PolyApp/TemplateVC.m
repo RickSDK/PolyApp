@@ -30,14 +30,18 @@
 	self.mainArray = [[NSMutableArray alloc] init];
 	self.textViewTitle = [NSString new];
 	self.userObj = [UserObj new];
-	
+
+	self.responseString = [[NSMutableString alloc] init];
+
 	self.maxLength=25;
 	self.popupView.hidden=YES;
 	
-	self.adView = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
-	self.adView.center = CGPointMake([[UIScreen mainScreen] bounds].size.width/2, [[UIScreen mainScreen] bounds].size.height-89);
-	[self.view addSubview:self.adView];
-	self.adView.delegate=self;
+	if([ObjectiveCScripts myLevel]!=2) {
+		self.adView = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
+		self.adView.center = CGPointMake([[UIScreen mainScreen] bounds].size.width/2, [[UIScreen mainScreen] bounds].size.height-89);
+		[self.view addSubview:self.adView];
+		self.adView.delegate=self;
+	}
 	
 	self.webServiceView = [[WebServiceView alloc] initWithFrame:CGRectMake(36, 203, 257, 178)];
 	[self.view addSubview:self.webServiceView];
@@ -45,6 +49,13 @@
 	
 	self.largeImageSize=300;
 	
+
+	
+}
+
+-(void)extendTableForGold {
+	if([ObjectiveCScripts myLevel]>1)
+		self.mainTableView.frame = CGRectMake(self.mainTableView.frame.origin.x, self.mainTableView.frame.origin.y, self.mainTableView.frame.size.width, self.mainTableView.frame.size.height+50);
 }
 
 -(void)textViewDidBeginEditing:(UITextView *)textView {
@@ -210,6 +221,26 @@
 	}
 	
 }
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+	NSLog(@"+++didReceiveResponse");
+}
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+	NSLog(@"+++didFailWithError");
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+	NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	[self.responseString appendString:response];
+	NSLog(@"+++didReceiveData");
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+	if(self.responseString.length>0) {
+		NSLog(@"+++response: %@", self.responseString);
+	}
+}
+
 
 
 
