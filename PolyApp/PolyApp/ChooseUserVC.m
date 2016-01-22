@@ -101,9 +101,10 @@
 			[ObjectiveCScripts setUserDefaultValue:@"fbPics" forKey:@"imgDir"];
 			fbFlag = @"Y";
 		}
-		NSArray *nameList = [NSArray arrayWithObjects:@"code", @"username", @"image", @"smallImage", @"fbFlag", nil];
+		NSArray *nameList = [NSArray arrayWithObjects:@"code", @"username", @"image", @"smallImage", @"fbFlag", @"version", nil];
 		NSArray *valueList = [NSArray arrayWithObjects:@"123",
 							  userName, image, smallImage, fbFlag,
+							  [ObjectiveCScripts getProjectDisplayVersion],
 							  nil];
 		NSString *webAddr = @"http://www.appdigity.com/poly/checkUsername.php";
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
@@ -209,8 +210,6 @@
 	 logInWithReadPermissions: @[@"public_profile"]
 	 fromViewController:self
 	 handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-		 NSLog(@"+++result.token.userID: %@", result.token.userID);
-		 FBSDKAccessToken *token = result.token;
 		 if (error) {
 			 NSLog(@"Process error");
 		 } else if (result.isCancelled) {

@@ -23,6 +23,8 @@
 	self.mainPic.image = [ObjectiveCScripts avatarImageThumbSize:NO];
 	
 	self.upgradeButton.enabled=[ObjectiveCScripts myLevel]<2;
+	if([ObjectiveCScripts myLevel]>=2)
+		self.upgradeButton.hidden=YES;
 	
 	self.usernameLabel.text = [ObjectiveCScripts getUserDefaultValue:@"userName"];
 	
@@ -51,6 +53,7 @@
 
 	self.rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Update" style:UIBarButtonItemStyleBordered target:self action:@selector(updateButtonPressed)];
 	self.navigationItem.rightBarButtonItem = self.rightButton;
+	
 	self.rightButton.enabled=NO;
 	self.updateProfileButton.enabled=NO;
 	self.userIdLabel.text = [NSString stringWithFormat:@"%d", [ObjectiveCScripts myUserId]];
@@ -65,8 +68,58 @@
 		self.confirmField.alpha=.4;
 		self.lastNameField.enabled=NO;
 		self.lastNameField.alpha=.4;
+	} else {
+		for(UITextField *field in self.textFieldElements) {
+			field.enabled=NO;
+			field.alpha=.4;
+			self.sexSegment.enabled=NO;
+			self.stateButton.enabled=NO;
+			self.countryButton.enabled=NO;
+		}
+		self.rightButton.enabled=YES;
+		self.editFieldsGrayFlg=YES;
+		[self.rightButton setTitle:@"Edit"];
 	}
+	if([ObjectiveCScripts getUserDefaultValue:@"email"].length>0) {
+		[self performSelectorInBackground:@selector(backgroundCheck) withObject:nil];
+	}
+}
+
+-(void)backgroundCheck {
+	@autoreleasepool {
+		NSArray *nameList = [NSArray arrayWithObjects:@"username", nil];
+		NSArray *valueList = [NSArray arrayWithObjects:
+							  [ObjectiveCScripts getUserDefaultValue:@"userName"], nil];
+		NSString *webAddr = @"http://www.appdigity.com/poly/getLevel.php";
+		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
+		NSLog(@"+++%@", responseStr);
+		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:self]) {
+			NSArray *components = [responseStr componentsSeparatedByString:@"<br>"];
+			if(components.count>1) {
+				int level = [[components objectAtIndex:1] intValue];
+				if(level != [ObjectiveCScripts myLevel]) {
+					[ObjectiveCScripts showAlertPopup:@"Account Upgraded" message:@""];
+					[ObjectiveCScripts setUserDefaultValue:[NSString stringWithFormat:@"%d", level] forKey:@"level"];
+					self.levelImageView.image = [ObjectiveCScripts imageForLevel:[ObjectiveCScripts myLevel]];
+					self.levelLabel.text = [ObjectiveCScripts userNameForLevel:[ObjectiveCScripts myLevel]];
+				}
+			}
+		}
+	}
+}
+
+-(void)enableEditFields {
+	for(UITextField *field in self.textFieldElements) {
+		field.enabled=YES;
+		field.alpha=1;
+	}
+	self.sexSegment.enabled=YES;
+	self.stateButton.enabled=YES;
+	self.countryButton.enabled=YES;
 	
+	self.rightButton.enabled=NO;
+	self.editFieldsGrayFlg=NO;
+	[self.rightButton setTitle:@"Update"];
 }
 
 -(BOOL)textField:(UITextField *)textFieldlocal shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
@@ -92,6 +145,10 @@
 
 
 -(void)updateButtonPressed {
+	if(self.editFieldsGrayFlg) {
+		[self enableEditFields];
+		return;
+	}
 	if(self.firstNameField.text.length==0) {
 		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"Fill in a first name"];
 		return;

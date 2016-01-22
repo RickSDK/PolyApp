@@ -22,6 +22,9 @@
     [super viewDidLoad];
 	NSLog(@"self.userObj.answers %@", self.uObj.answers);
 	[self loadIssuesFromDatabase];
+	
+	[self extendTableForGold];
+
 }
 
 -(void)loadIssuesFromDatabase {

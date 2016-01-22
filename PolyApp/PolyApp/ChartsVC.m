@@ -67,6 +67,10 @@
 						float maleVotes = votes-femaleVotes;
 						if(votes>self.maxVotes)
 							self.maxVotes=votes;
+						if(femaleVotes>self.maxFVotes)
+							self.maxFVotes=femaleVotes;
+						if(maleVotes>self.maxMVotes)
+							self.maxMVotes=maleVotes;
 						NSArray *names = [name componentsSeparatedByString:@" "];
 						if(names.count>0)
 							name = [names objectAtIndex:names.count-1];
@@ -111,12 +115,18 @@
 }
 
 -(void)positionImages {
-	if(self.maxVotes==0)
+	int max=self.maxVotes;
+	if(self.sexSegment.selectedSegmentIndex==1)
+		max=self.maxMVotes;
+	if(self.sexSegment.selectedSegmentIndex==2)
+		max=self.maxFVotes;
+	
+	if(max==0)
 		return;
 	
 	int totalWidth = [ObjectiveCScripts screenWidth];
 	int bottomEdgeOfChart=190;
-	float yMultiplier = (float)(self.mainPic.frame.size.height)/self.maxVotes;
+	float yMultiplier = (float)(self.mainPic.frame.size.height)/max;
 
 	float leftEdgeOfChart=totalWidth/12.8;
 	int i=0;
@@ -128,6 +138,9 @@
 		leftEdgeOfChart+=100/imgCount;
 	
 	float imgWidth = 280/(imgCount);
+	if(totalWidth==320)
+		leftEdgeOfChart-=imgWidth/6;
+
 	if(imgWidth>60)
 		imgWidth=60;
 	for(GraphObject *obj in self.mainArray) {

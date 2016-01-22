@@ -55,6 +55,6 @@
 - (IBAction) prevButtonPressed: (id) sender;
 - (IBAction) segmentChanged: (id) sender;
 - (IBAction) retakeButtonPressed: (id) sender;
-//- (IBAction) xButtonPressed: (id) sender;
+- (IBAction) scienceButtonPressed: (id) sender;
 
 @end

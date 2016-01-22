@@ -13,6 +13,8 @@
 #define kMenu1	@"Change Election Country"
 #define kMenu2	@"Change Election Year"
 #define kMenu3	@"Email Developer"
+#define kMenu4	@"Bug Report"
+#define kMenu5	@"Review App"
 
 @interface OptionsVC ()
 
@@ -26,6 +28,8 @@
 	[self.mainArray addObject:kMenu1];
 	[self.mainArray addObject:kMenu2];
 	[self.mainArray addObject:kMenu3];
+	[self.mainArray addObject:kMenu4];
+	[self.mainArray addObject:kMenu5];
 	
 	self.upgradeButton.hidden=[ObjectiveCScripts myLevel]>=2;
 	
@@ -70,6 +74,13 @@
 	}
 	if([kMenu3 isEqualToString:[self.mainArray objectAtIndex:indexPath.row]]) {
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"mailto:%@", @"rickmedved@hotmail.com"]]];
+	}
+	if([kMenu4 isEqualToString:[self.mainArray objectAtIndex:indexPath.row]]) {
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"mailto:%@", @"rickmedved@hotmail.com"]]];
+	}
+	if([kMenu5 isEqualToString:[self.mainArray objectAtIndex:indexPath.row]]) {
+		NSString *appId = @"1070878372";
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://itunes.apple.com/us/app/apple-store/id%@?mt=8", appId]]];
 	}
 }
 

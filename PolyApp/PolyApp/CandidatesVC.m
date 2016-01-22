@@ -109,6 +109,7 @@
 		NSString *webAddr = @"http://www.appdigity.com/poly/getCandidates.php";
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
 		[self.mainArray removeAllObjects];
+		int numCandidates=0;
 		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:nil]) {
 			NSArray *lines = [responseStr componentsSeparatedByString:@"<br>"];
 			self.rows=0;
@@ -116,7 +117,7 @@
 				if(line.length>7) {
 					NSArray *components = [line componentsSeparatedByString:@"|"];
 					if(components.count>18) {
-						
+						numCandidates++;
 						int candidate_id = [[components objectAtIndex:0] intValue];
 						NSPredicate *predicate = [NSPredicate predicateWithFormat:@"candidate_id = %d", candidate_id];
 						NSArray *items = [CoreDataLib selectRowsFromEntity:@"CANDIDATE" predicate:predicate sortColumn:nil mOC:self.managedObjectContext ascendingFlg:NO];
@@ -164,9 +165,19 @@
 		
 		[ObjectiveCScripts updateFlagForNumber:2 toString:@""];
 
+		NSArray *items = [CoreDataLib selectRowsFromEntity:@"CANDIDATE" predicate:nil sortColumn:nil mOC:self.managedObjectContext ascendingFlg:NO];
+
 		[self stopWebService];
 		[self loadDataFromDatabase];
 
+		if(numCandidates != items.count) {
+			for(NSManagedObject *mo in items)
+				[self.managedObjectContext deleteObject:mo];
+			[self.managedObjectContext save:nil];
+			[ObjectiveCScripts updateFlagForNumber:2 toString:@"Y"];
+			[ObjectiveCScripts showAlertPopup:@"Unexpected Error" message:@"Clearing cache..."];
+			[self.navigationController popViewControllerAnimated:YES];
+		}
 	}
 }
 

@@ -23,6 +23,8 @@
 @property (strong, nonatomic) IBOutlet UIView *howWorkView;
 @property (strong, nonatomic) UserObj *user1;
 @property (strong, nonatomic) UserObj *user2;
+@property (nonatomic) BOOL messageFlg;
+@property (nonatomic) int favDebate;
 
 -(IBAction)topSegmentClicked:(id)sender;
 -(IBAction)howWorkButtonClicked:(id)sender;

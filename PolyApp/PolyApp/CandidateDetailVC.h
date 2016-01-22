@@ -77,6 +77,7 @@
 - (IBAction) switchPressed: (id) sender;
 - (IBAction) segmentChanged: (id) sender;
 - (IBAction) updateButtonPressed: (id) sender;
+- (IBAction) deleteButtonPressed: (id) sender;
 
 
 @end

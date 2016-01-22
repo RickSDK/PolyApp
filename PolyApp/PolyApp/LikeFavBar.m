@@ -8,6 +8,7 @@
 
 #import "LikeFavBar.h"
 #import "UIColor+ATTColor.h"
+#import "ObjectiveCScripts.h"
 
 @implementation LikeFavBar
 
@@ -29,7 +30,8 @@
 	self.layer.borderWidth = 1.;
 
 	float width = [[UIScreen mainScreen] bounds].size.width;
-	self.frame = CGRectMake(0, [[UIScreen mainScreen] bounds].size.height-158, width, 44);
+	int frameYOffset = ([ObjectiveCScripts myLevel]>=2)?108:158;
+	self.frame = CGRectMake(0, [[UIScreen mainScreen] bounds].size.height-frameYOffset, width, 44);
 	self.backgroundColor = [UIColor colorWithWhite:.8 alpha:1];
 	
 	self.likeLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 1, 70, 20)];

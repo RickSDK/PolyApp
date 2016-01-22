@@ -54,7 +54,7 @@
 }
 
 -(void)extendTableForGold {
-	if([ObjectiveCScripts myLevel]>1)
+	if([ObjectiveCScripts myLevel]==2)
 		self.mainTableView.frame = CGRectMake(self.mainTableView.frame.origin.x, self.mainTableView.frame.origin.y, self.mainTableView.frame.size.width, self.mainTableView.frame.size.height+50);
 }
 
@@ -84,6 +84,12 @@
 	[self performSelectorInBackground:aSelector withObject:nil];
 }
 
+-(void)stopWebService {
+	for(UIControl *button in self.webServiceElements)
+		button.enabled=YES;
+	[self.webServiceView stop];
+}
+
 -(void)resignResponders {
 	for(UIControl *textField in self.textFieldElements)
 		[textField resignFirstResponder];
@@ -92,12 +98,6 @@
 - (IBAction) xButtonPressed: (id) sender {
 	self.popupView.hidden=YES;
 	[self resignResponders];
-}
-
--(void)stopWebService {
-	for(UIControl *button in self.webServiceElements)
-		button.enabled=YES;
-	[self.webServiceView stop];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -209,7 +209,7 @@
 }
 
 - (IBAction) sortSegmentChanged: (id) sender {
-	NSLog(@"Here");
+	NSLog(@"sortSegmentChanged");
 	[self.sortSegment changeSegment];
 	[self startWebService:@selector(loadDataWebService) message:nil];
 }

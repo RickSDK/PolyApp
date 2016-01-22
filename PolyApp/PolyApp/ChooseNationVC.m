@@ -22,17 +22,6 @@
 @implementation ChooseNationVC
 @synthesize yearFlg;
 
--(void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-	if(self.yearFlg) {
-		self.titleLabel.text = @"Choose a Presidential Election year";
-		[self startWebService:@selector(getYearsWebServiceCall) message:nil];
-	} else {
-		[self startWebService:@selector(getCountriesWebServiceCall) message:nil];
-	}
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
@@ -48,10 +37,24 @@
 	self.rightButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addButtonPressed)];
 	self.navigationItem.rightBarButtonItem = self.rightButton;
 	
+	if([ObjectiveCScripts getUserDefaultValue:@"Country"].length==0)
+		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:nil];
+	
 	[self.webServiceElements addObject:self.selectButton];
 	[self.webServiceElements addObject:self.rightButton];
 
 
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	if(self.yearFlg) {
+		self.titleLabel.text = @"Choose a Presidential Election year";
+		[self startWebService:@selector(getYearsWebServiceCall) message:nil];
+	} else {
+		[self startWebService:@selector(getCountriesWebServiceCall) message:nil];
+	}
 }
 
 -(void)getYearsWebServiceCall

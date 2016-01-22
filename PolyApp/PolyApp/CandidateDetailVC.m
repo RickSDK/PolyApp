@@ -109,8 +109,11 @@
 	self.likeFavBar = [[LikeFavBar alloc] init];
 	[self.view addSubview:self.likeFavBar];
 	[self.likeFavBar setupLikeFavBarButtonsForTarget:self likeSelector:@selector(likeButtonPressed) favSelector:@selector(favButtonPressed)];
+	if([ObjectiveCScripts myLevel]>1)
+		self.likeFavBar.center = CGPointMake(self.likeFavBar.center.x, self.likeFavBar.center.y+50);
 	
 	[self loadIssues];
+	[self extendTableForGold];
 	
 	if(self.favQuoteCandidate>0)
 		[self performSelectorInBackground:@selector(loadFavQuote) withObject:nil];
@@ -202,6 +205,13 @@
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	if(alertView.tag==101) {
+		if(buttonIndex != alertView.cancelButtonIndex)
+			[self startWebService:@selector(deleteUser) message:nil];
+		
+		return;
+	}
+	
 	PolyTestVC *detailViewController = [[PolyTestVC alloc] initWithNibName:@"PolyTestVC" bundle:nil];
 	detailViewController.managedObjectContext = self.managedObjectContext;
 	detailViewController.title = @"Poly Test";
@@ -215,6 +225,8 @@
 		self.uploadPhotoButton.hidden=!self.editMode;
 		self.editCandidateView.hidden=!self.editMode;
 		self.adminView.hidden=!self.editMode;
+		if([ObjectiveCScripts myLevel]<3)
+			self.adminView.hidden=YES;
 		self.mainTableView.hidden=self.editMode;
 		self.nameLabel.hidden=self.editMode;
 	}
@@ -400,6 +412,32 @@
 	}
 	
 }
+
+-(void)deleteUser {
+	@autoreleasepool {
+		NSArray *nameList = [NSArray arrayWithObjects:@"username", @"Country", @"candidate_id", nil];
+		NSArray *valueList = [NSArray arrayWithObjects:
+							  [ObjectiveCScripts getUserDefaultValue:@"userName"],
+							  [ObjectiveCScripts getUserDefaultValue:@"Country"],
+							  [NSString stringWithFormat:@"%d", self.candidateObj.candidate_id],
+							  nil];
+		NSString *webAddr = @"http://www.appdigity.com/poly/deleteCandidate.php";
+		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
+		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:nil]) {
+			[ObjectiveCScripts showAlertPopup:@"Success" message:@""];
+			[ObjectiveCScripts updateFlagForNumber:2 toString:@"Y"];
+		}
+		
+		[self stopWebService];
+	}
+	
+}
+
+- (IBAction) deleteButtonPressed: (id) sender {
+	[ObjectiveCScripts showConfirmationPopup:@"Delete Candidate?" message:@"" delegate:self tag:101];
+}
+
+
 
 -(void)backgroundWebService {
 	@autoreleasepool {

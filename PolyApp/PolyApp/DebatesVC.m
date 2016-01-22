@@ -25,6 +25,9 @@
 {
 	[super viewWillAppear:animated];
 	
+	if(self.favDebate>0)
+		self.topSegment.selectedSegmentIndex=1;
+	
 	[self startWebService:@selector(loadDataWebService) message:@"Loading"];
 	
 }
@@ -78,6 +81,7 @@
 		NSString *webAddr = @"http://www.appdigity.com/poly/getDebates.php";
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
 		NSLog(@"+++%@", responseStr);
+		DebateObj *favDebate = [DebateObj new];
 		[self.mainArray removeAllObjects];
 		if([ObjectiveCScripts validateStandardResponse:responseStr delegate:nil]) {
 			NSArray *lines = [responseStr componentsSeparatedByString:@"<br>"];
@@ -87,17 +91,31 @@
 					self.user1.user_id=obj.user1;
 					self.user2.user_id=obj.user2;
 					[self.mainArray addObject:obj];
+					if(self.favDebate>0 && obj.debate_id==self.favDebate)
+						favDebate=obj;
+					
 					if(obj.currentUser==[ObjectiveCScripts myUserId] && [@"Active" isEqualToString:obj.status])
 						[ObjectiveCScripts showAlertPopup:@"Notice!" message:[NSString stringWithFormat:@"It's your turn to add comments to debate: %@", obj.topic]];
 				}
 			[ObjectiveCScripts updateFlagForNumber:4 toString:@""];
 		}
 		
-		if(self.mainArray.count==0 && self.topSegment.selectedSegmentIndex==0)
-			[ObjectiveCScripts showAlertPopup:@"No Open Debates" message:@"Currently no open debates. Click the '+' button at the top to get the fun started!"];
+		if(self.mainArray.count==0 && self.topSegment.selectedSegmentIndex==0 && !self.messageFlg) {
+			self.messageFlg=YES;
+			[ObjectiveCScripts showAlertPopup:@"No Open Debates" message:@"Currently no open debates. Click the '+' button at the top to get the fun started! Or check Completed Debates."];
+		}
 		
 		[self stopWebService];
 		[self.mainTableView reloadData];
+		
+		if(self.favDebate>0) {
+			self.favDebate=0;
+			DebateDetailVC *detailViewController = [[DebateDetailVC alloc] initWithNibName:@"DebateDetailVC" bundle:nil];
+			detailViewController.managedObjectContext = self.managedObjectContext;
+			detailViewController.title = @"Debate Details";
+			detailViewController.debateObj=favDebate;
+			[self.navigationController pushViewController:detailViewController animated:YES];
+		}
 	}
 }
 

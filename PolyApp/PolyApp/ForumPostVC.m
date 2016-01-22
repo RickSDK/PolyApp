@@ -25,6 +25,7 @@
 	self.categoryLabel.text = self.categoryObj.name;
 	self.userObj = [UserObj new];
 
+	[self extendTableForGold];
 	[self startWebService:@selector(loadDataWebService) message:@"Loading"];
 
 }

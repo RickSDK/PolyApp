@@ -17,6 +17,7 @@
 #import "CandidateDetailVC.h"
 #import "CandidateObj.h"
 #import "UserTestResultsVC.h"
+#import "DebatesVC.h"
 
 @interface UserDetailVC ()
 
@@ -384,15 +385,15 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	if(self.sortSegment.selectedSegmentIndex==1 && self.userObj.favCartoon>0) {
-		if(indexPath.row==1) {
+	if(self.sortSegment.selectedSegmentIndex==1) {
+		if(indexPath.row==1 && self.userObj.favCartoon>0) {
 			CartoonsVC *detailViewController = [[CartoonsVC alloc] initWithNibName:@"CartoonsVC" bundle:nil];
 			detailViewController.managedObjectContext = self.managedObjectContext;
 			detailViewController.title = @"Cartoons";
 			detailViewController.favoriteCartoon=self.userObj.favCartoon;
 			[self.navigationController pushViewController:detailViewController animated:YES];
 		}
-		if(indexPath.row==2) {
+		if(indexPath.row==2 && self.userObj.favQuoteCandidate>0) {
 			NSPredicate *predicate = [NSPredicate predicateWithFormat:@"candidate_id = %d", self.userObj.favQuoteCandidate];
 			NSArray *items = [CoreDataLib selectRowsFromEntity:@"CANDIDATE" predicate:predicate sortColumn:nil mOC:self.managedObjectContext ascendingFlg:NO];
 			if(items.count>0) {
@@ -400,6 +401,13 @@
 				CandidateObj *candidateObj = [CandidateObj objectFromManagedObject:mo];
 				[self gotoCandidateQuote:candidateObj];
 			}
+		}
+		if(indexPath.row==4 && self.userObj.favDebate>0) {
+			DebatesVC *detailViewController = [[DebatesVC alloc] initWithNibName:@"DebatesVC" bundle:nil];
+			detailViewController.managedObjectContext = self.managedObjectContext;
+			detailViewController.title = @"Debates";
+			detailViewController.favDebate=self.userObj.favDebate;
+			[self.navigationController pushViewController:detailViewController animated:YES];
 		}
 	}
 }
@@ -439,8 +447,10 @@
 }
 
 -(IBAction)testResultsButtonPressed:(id)sender {
-	if([ObjectiveCScripts myLevel]==0)
+	if([ObjectiveCScripts myLevel]==0) {
 		[ObjectiveCScripts showAlertPopup:@"Notice" message:@"You must be a Silver member to see results. Please Upgrade!"];
+		return;
+	}
 
 	UserTestResultsVC *detailViewController = [[UserTestResultsVC alloc] initWithNibName:@"UserTestResultsVC" bundle:nil];
 	detailViewController.managedObjectContext = self.managedObjectContext;

@@ -73,8 +73,6 @@
 	
 	[self extendTableForGold];
 	
-	if([ObjectiveCScripts getUserDefaultValue:@"cacheAllThumbnails"].length==0)
-		[self performSelectorInBackground:@selector(cacheAllThumbnails) withObject:nil];
 
 
 //	[self checkUDID];
@@ -116,6 +114,7 @@
 		self.usernameLabel.layer.masksToBounds = YES;				// clips background images to rounded corners
 		self.usernameLabel.layer.borderColor = [UIColor blackColor].CGColor;
 		self.usernameLabel.layer.borderWidth = 1.;
+		
 	}
 	self.leftUsernameLabel.text = [ObjectiveCScripts getUserDefaultValue:@"userName"];
 	
@@ -134,6 +133,9 @@
 		[self.navigationController pushViewController:detailViewController animated:YES];
 		return;
 	}
+	if([ObjectiveCScripts getUserDefaultValue:@"cacheAllThumbnails"].length==0)
+		[self performSelectorInBackground:@selector(cacheAllThumbnails) withObject:nil];
+	
 	if([ObjectiveCScripts getUserDefaultValue:@"CandidateId"].length==0) {
 		CandidatesVC *detailViewController = [[CandidatesVC alloc] initWithNibName:@"CandidatesVC" bundle:nil];
 		detailViewController.managedObjectContext = self.managedObjectContext;
@@ -276,7 +278,6 @@
 */
 -(void)cacheAllThumbnails {
 	NSLog(@"cacheAllThumbnails");
-	[ObjectiveCScripts setUserDefaultValue:@"Y" forKey:@"cacheAllThumbnails"];
 	NSArray *nameList = [NSArray arrayWithObjects:@"username", @"Country", @"year", nil];
 	NSArray *valueList = [NSArray arrayWithObjects:[ObjectiveCScripts getUserDefaultValue:@"userName"], [ObjectiveCScripts getUserDefaultValue:@"Country"], [ObjectiveCScripts getUserDefaultValue:@"Year"], nil];
 	NSString *webAddr = @"http://www.appdigity.com/poly/getCandidates.php";
@@ -292,6 +293,7 @@
 				}
 			}
 		}
+		[ObjectiveCScripts setUserDefaultValue:@"Y" forKey:@"cacheAllThumbnails"];
 	}
 }
 
@@ -312,7 +314,7 @@
 		cell = [[MainMenuCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 	cell.nameLabel.text=[self.mainMenu objectAtIndex:indexPath.row];
 	
-	cell.backgroundColor = [UIColor ATTBlue];
+	cell.backgroundColor = [UIColor ATTDarkBlue];
 	
 	cell.pic.image = [UIImage imageNamed:[NSString stringWithFormat:@"icon%d.jpg", (int)indexPath.row]];
 	

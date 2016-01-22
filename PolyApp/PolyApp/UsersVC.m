@@ -25,32 +25,40 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	[ObjectiveCScripts updateFlagForNumber:7 toString:@""];
-	[self startWebService:@selector(loadDataWebService) message:@"Loading"];
+	self.sortSegment.enabled=NO;
 	
 	[self extendTableForGold];
 
+	[self prepForNewLoad];
+
+}
+
+-(void)prepForNewLoad {
+	self.mainTableView.hidden=YES;
+	[self.mainArray removeAllObjects];
+	self.skipNumber=0;
+	[self startWebService:@selector(loadDataWebService) message:@"Loading"];
 }
 
 -(void)loadDataWebService
 {
 	@autoreleasepool {
 		[NSThread sleepForTimeInterval:.1];
-		[self.mainArray removeAllObjects];
-		self.skipNumber=0;
-		self.mainTableView.hidden=YES;
 		[self doTheWork];
 	}
 }
 
 -(void)doTheWork {
 	self.allowMoreFlg=NO;
-	NSArray *nameList = [NSArray arrayWithObjects:@"username", @"Country", @"orderBy", @"skipNumber", @"friendFlg", nil];
+	self.endOfResultsFlg=YES;
+	NSArray *nameList = [NSArray arrayWithObjects:@"username", @"Country", @"orderBy", @"skipNumber", @"friendFlg", @"searchText", nil];
 	NSArray *valueList = [NSArray arrayWithObjects:
 						  [ObjectiveCScripts getUserDefaultValue:@"userName"],
 						  [ObjectiveCScripts getUserDefaultValue:@"Country"],
 						  (self.sortSegment.selectedSegmentIndex==0)?@"created":@"name",
 						  [NSString stringWithFormat:@"%d", self.skipNumber],
-						  (self.sortSegment.selectedSegmentIndex==2)?@"Y":@"N",
+						  (self.sortSegment.selectedSegmentIndex==1)?@"Y":@"N",
+						  [[ObjectiveCScripts validString:self.searchBar.text] lowercaseString],
 						  nil];
 	NSString *webAddr = @"http://www.appdigity.com/poly/getUsers.php";
 	NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
@@ -65,10 +73,12 @@
 					[self.mainArray addObject:userObj];
 					self.skipNumber++;
 					self.allowMoreFlg=YES;
+					self.endOfResultsFlg=NO;
 				}
 			}
 	} 	
 	
+	self.sortSegment.enabled=YES;
 	self.mainTableView.hidden=NO;
 	[self stopWebService];
 	[self.mainTableView reloadData];
@@ -81,6 +91,12 @@
 
 	UserObj *userObj= [self.mainArray objectAtIndex:indexPath.row];
 	[UserCell populateCell:cell withObj:userObj];
+	
+	if(indexPath.row==self.skipNumber-1 && !self.endOfResultsFlg) {
+		self.endOfResultsFlg=YES;
+		NSLog(@"Load more!");
+		[self performSelectorInBackground:@selector(loadDataWebService) withObject:nil];
+	}
 	
 	cell.accessoryType= UITableViewCellAccessoryDisclosureIndicator;
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -116,6 +132,22 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return 44;
+}
+
+-(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+	[searchBar resignFirstResponder];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+	[searchBar resignFirstResponder];
+	[self prepForNewLoad];
+}
+
+- (IBAction) sortSegmentChanged: (id) sender {
+	NSLog(@"sortSegmentChanged");
+	[self.sortSegment changeSegment];
+	[self prepForNewLoad];
 }
 
 @end

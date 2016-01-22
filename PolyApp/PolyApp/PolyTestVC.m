@@ -456,6 +456,10 @@
 
 }
 
+- (IBAction) scienceButtonPressed: (id) sender {
+	self.ideologytextView.text = @"Here's the science behind the PolyTest:\n\nThe first 10 questions are based on 'Economic & Fairness' items. For these types of issues both Liberals and Statists tend to favor MORE government control. While Conservatives and Libertarians tend to favor LESS government control.\n\nThe last 10 questions are issues of 'Morals & Greatness'. For these issues Conservatives and Statists favor MORE government control. Liberals and Libertarians favor less government control.\n\nThe final result is liberals tend to want maximum government control of 'Economic & Fairness' issues while minimum amount of control for issues related to 'Morals & Greatness'. Conservatives want exactly the opposite.\n\nLibertarians tend to want less government control for all issues, and Statists want maximum government control of all issues. The results are charted on a diamond shaped diagram, which is shown on this page.";
+}
+
 
 
 @end

@@ -31,6 +31,8 @@
 @property (strong, nonatomic) NSMutableArray *femaleVotersArray;
 
 @property (nonatomic) int maxVotes;
+@property (nonatomic) int maxMVotes;
+@property (nonatomic) int maxFVotes;
 
 @property (strong, nonatomic) IBOutlet CustomSegment *sexSegment;
 

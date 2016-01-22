@@ -48,7 +48,7 @@
 		NSString *responseStr = [ObjectiveCScripts getResponseFromServerUsingPost:webAddr fieldList:nameList valueList:valueList];
 		NSLog(@"+++%@", responseStr);
 		BOOL adminFlg = [ObjectiveCScripts myLevel]>=3;
-		if([ObjectiveCScripts myUserId]<20) //<-- all admins
+		if([ObjectiveCScripts myUserId]<30) //<-- all admins
 			adminFlg=YES;
 		
 		[self.mainArray removeAllObjects];

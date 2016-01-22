@@ -10,4 +10,7 @@
 
 @interface UsersVC : TemplateVC
 
+@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (nonatomic) BOOL endOfResultsFlg;
+
 @end

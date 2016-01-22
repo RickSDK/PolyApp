@@ -33,6 +33,7 @@
 
 
 @property (nonatomic) int selectedButton;
+@property (nonatomic) BOOL editFieldsGrayFlg;
 
 -(void)valueSelected:(NSString *)value;
 
